@@ -1,0 +1,417 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}COIMPRE S.r.l. - Importador Oficial de Productos Italianos en Cuba{% endblock %}
+
+{% block description %}COIMPRE S.r.l. - Importador oficial de productos italianos de alta calidad en Cuba desde 2014. Productos Made in Italy para tu hogar y negocio en La Habana.{% endblock %}
+
+{% block keywords %}COIMPRE, productos italianos, made in Italy, importación Cuba, La Habana, Miramar, productos de calidad, Italia{% endblock %}
+
+{% block og_title %}COIMPRE S.r.l. - Lo Mejor de Italia en Cuba{% endblock %}
+{% block og_description %}Importador oficial de productos italianos de alta calidad en Cuba desde 2014. Descubre nuestra selección de productos Made in Italy.{% endblock %}
+
+{% block extra_structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "COIMPRE S.r.l.",
+    "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo_3.png' %}",
+    "description": "Importador oficial de productos italianos de alta calidad en Cuba desde 2014",
+    "url": "{{ request.scheme }}://{{ request.get_host }}",
+    "telephone": "+53-72141480",
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Miramar",
+        "addressLocality": "La Habana",
+        "addressCountry": "CU"
+    },
+    "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 23.1136,
+        "longitude": -82.3666
+    },
+    "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+            "Monday",
+            "Tuesday", 
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ],
+        "opens": "09:00",
+        "closes": "18:00"
+    },
+    "sameAs": [
+        "https://www.facebook.com/coimpre",
+        "https://www.instagram.com/coimpre"
+    ],
+    "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Productos Italianos",
+        "itemListElement": [
+            {
+                "@type": "Offer",
+                "itemOffered": {
+                    "@type": "Product",
+                    "name": "Productos Made in Italy"
+                }
+            }
+        ]
+    },
+    "areaServed": {
+        "@type": "Country",
+        "name": "Cuba"
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section: Simplified Italian imports showcase -->
+<section class="hero-section hero-simplified position-relative overflow-hidden">
+    <!-- Simple accent stripe at the top -->
+    <div class="italian-stripe"></div>
+
+    <!-- Background collage built from featured product images - Más fotos con tamaños iguales -->
+    <div class="hero-collage" aria-hidden="true">
+        {% for product in featured_products %}
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="" class="collage-item" loading="lazy" decoding="async">
+            {% endif %}
+        {% endfor %}
+        <!-- Repetir todas las fotos múltiples veces para llenar completamente el grid en móvil -->
+        {% for repetition in "123456" %}
+            {% for product in featured_products %}
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="" class="collage-item" loading="lazy" decoding="async" style="opacity: 0.7;">
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <!-- Dark overlay to ensure text readability over collage -->
+    <div class="hero-overlay" aria-hidden="true"></div>
+    
+    <!-- Main hero content -->
+    <div class="container py-5">
+        <div class="row justify-content-center text-center align-items-center">
+            <!-- Expanded content column -->
+            <div class="col-lg-8 col-xl-7 mb-4 mb-lg-0">
+                <div class="hero-content-wrapper">
+                    <!-- Hero title with more spacing -->
+                    <h1 class="hero-title font-black mb-4" style="color: white !important;">{{ i18n.hero_title|default:"Productos Italianos de Calidad en Cuba" }}</h1>
+                    
+                    <!-- Subtitle/description area -->
+                    
+                    <!-- CTA buttons with more separation -->
+                    <div class="hero-buttons-wrapper mb-5">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                            <a href="/productos/" class="btn hero-btn-primary btn-lg">
+                                </i>{{ i18n.view_products|default:"Ver Productos" }}
+                            </a>
+                            <a href="/contact/" class="btn hero-btn-secondary btn-lg">
+                                </i>{{ i18n.contact_us|default:"Contáctanos" }}
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Trust indicators with better spacing -->
+                    <div class="hero-trust-indicators">
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <span class="trust-item"><i class="bi bi-check-circle"></i> {{ i18n.since_2014|default:"Desde 2014" }}</span>
+                            <span class="trust-item"><i class="bi bi-building"></i> {{ i18n.office_miramar|default:"Oficina en Miramar" }}</span>
+                            <span class="trust-item"><i class="bi bi-boxes"></i> {{ i18n.customs_warehouse|default:"Depósito Aduanero" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right media column - simplified -->
+            
+        </div>
+    </div>
+    
+    <!-- Simplified divider -->
+    <div class="hero-divider"></div>
+</section>
+
+
+
+<!-- About Section: Company information with visual improvements -->
+<section id="about" class="py-5 bg-light-custom">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 text-center">
+                <h2 class="section-title">{{ i18n.about_us }}</h2>
+                <hr class="section-divider w-25 mx-auto mb-4">
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3 text-accent">
+                            <i class="bi bi-book me-2"></i>{{ i18n.our_story }}
+                        </h3>
+                        <p class="card-text">{{ i18n.story_content }}</p>
+                        
+                        <h3 class="card-title mt-4 mb-3 text-accent">
+                            <i class="bi bi-bullseye me-2"></i>{{ i18n.our_mission }}
+                        </h3>
+                        <p class="card-text">{{ i18n.mission_content }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3 text-accent">
+                            <i class="bi bi-stars me-2"></i>{{ i18n.our_values }}
+                        </h3>
+                        
+                        <div class="values-container">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="value-icon me-3 rounded-circle bg-accent text-white d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">{{ i18n.value_quality }}</h5>
+                                    <p class="mb-0 text-muted small">{{ i18n.value_quality_desc|default:"Seleccionamos solo los mejores productos italianos" }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="value-icon me-3 rounded-circle bg-accent text-white d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-eye"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">{{ i18n.value_authenticity }}</h5>
+                                    <p class="mb-0 text-muted small">{{ i18n.value_authenticity_desc|default:"Garantizamos la autenticidad de todos nuestros productos" }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="value-icon me-3 rounded-circle bg-accent text-white d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-tree"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">{{ i18n.value_tradition }}</h5>
+                                    <p class="mb-0 text-muted small">{{ i18n.value_tradition_desc|default:"Respetamos la tradición y artesanía italiana" }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <div class="value-icon me-3 rounded-circle bg-accent text-white d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">{{ i18n.value_customer }}</h5>
+                                    <p class="mb-0 text-muted small">{{ i18n.value_customer_desc|default:"Tu satisfacción es nuestra prioridad" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products: Showcasing top products -->
+<section id="featured-products" class="py-5">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 text-center">
+                <h2 class="section-title">{{ i18n.featured_products }}</h2>
+                <hr class="section-divider w-25 mx-auto mb-3">
+                <p class="lead mb-5 section-subtitle">{{ i18n.featured_subtitle }}</p>
+            </div>
+        </div>
+        
+        <!-- Carrusel automático de productos -->
+        <div id="autoProductCarousel" class="position-relative">
+            <div class="carousel-wrapper">
+                <div class="carousel-track" id="carouselTrack">
+                    {% for product in featured_products %}
+                    <div class="product-slide">
+                        <div class="card h-100 border-0 shadow-sm product-card">
+                            <div class="position-relative">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top product-card-img" alt="{{ product.name }}">
+                                {% else %}
+                                <img src="/static/img/no-image.jpg" class="card-img-top product-card-img" alt="Sin imagen">
+                                {% endif %}
+                                
+                                <!-- Badges de estado -->
+                                <div class="position-absolute top-0 start-0 p-2">
+                                    {% if product.destacado %}
+                                        <span class="badge bg-warning text-dark me-1">DESTACADO</span>
+                                    {% endif %}
+                                    {% if product.en_oferta %}
+                                        <span class="badge bg-danger">EN OFERTA</span>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if product.estatus %}
+                                <span class="position-absolute top-0 end-0 badge bg-accent m-2">
+                                    {{ product.estatus.name }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="category-badge small">{{ product.category }}</span>
+                                    {% if product.subcategory %}
+                                    <span class="badge bg-primary-custom small">{{ product.subcategory.name }}</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text text-muted flex-grow-1">{{ product.short_description|truncatechars:80 }}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    {% if product.price %}
+                                    <span class="fw-bold fs-5 text-success">${{ product.price }}</span>
+                                    {% else %}
+                                    <span class="text-muted">Consultar precio</span>
+                                    {% endif %}
+                                    
+                                    <a href="{% url 'productos:product_detail' product.slug %}" class="btn btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>{{ i18n.view_details|default:"Ver detalle" }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Controles del carrusel -->
+            <button class="carousel-control carousel-control-prev" id="prevBtn" onclick="moveCarousel(-1)">
+                <i class="bi bi-chevron-left fs-3"></i>
+            </button>
+            <button class="carousel-control carousel-control-next" id="nextBtn" onclick="moveCarousel(1)">
+                <i class="bi bi-chevron-right fs-3"></i>
+            </button>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <a href="{% url 'productos:product_list' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-grid me-2"></i>{{ i18n.all_products|default:"Ver todos los productos" }}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+ <!-- Mapa de Ubicación -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="map-section bg-white p-4 rounded-3 shadow-sm">
+                <div class="text-center mb-4">
+                    <h3 class="h4">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        {{ i18n.our_location|default:"Nuestra Ubicación" }}
+                    </h3>
+                    <p class="text-muted mb-0">{{ i18n.location_desc|default:"Edificio Residencia Miramar, situado en Ave. 7ma. No. 1805, e/ 18 y 20, apartamento 109, Miramar, playa, La Habana, Cuba" }}</p>
+                </div>
+                
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d2594.6268968681716!2d-82.4190960767334!3d23.12063926013867!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sus!4v1763698410674!5m2!1ses!2sus" 
+                        width="100%" 
+                        height="400" 
+                        style="border:0; border-radius: 10px;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Ubicación de COIMPRE S.r.l. en Miramar, La Habana">
+                    </iframe>
+                </div>
+                
+                <div class="map-footer mt-3 text-center">
+                    <a href="https://www.google.com/maps/search/?api=1&query=23.120760,-82.418666" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-up-right-square me-2"></i>
+                        {{ i18n.open_in_maps|default:"Abrir en Google Maps" }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<!-- Contact CTA: Clear call to action -->
+
+{% endblock %}
+<style>
+/* Estilos para la sección del mapa */
+    .map-section {
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .map-section:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+        transform: translateY(-2px);
+    }
+    
+    .map-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .map-container iframe {
+        transition: all 0.3s ease;
+    }
+    
+    .map-container:hover iframe {
+        transform: scale(1.02);
+    }
+    
+    .map-footer .btn {
+        transition: all 0.3s ease;
+        border-radius: 25px;
+        padding: 10px 20px;
+    }
+    
+    .map-footer .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+    }
+    
+    /* Responsive del mapa */
+    @media (max-width: 768px) {
+        .map-container iframe {
+            height: 300px;
+        }
+        
+        .map-section {
+            padding: 1.5rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .map-container iframe {
+            height: 250px;
+        }
+    }
+</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}">
+<link rel="stylesheet" href="{% static 'css/hero.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/carousel.js' %}"></script>
+{% endblock %}
