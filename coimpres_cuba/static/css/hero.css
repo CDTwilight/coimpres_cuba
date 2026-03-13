@@ -1,0 +1,267 @@
+/* Simplified Hero Section Styles */
+.hero-simplified {
+    background: var(--color-primary);
+    padding: 0;
+    position: relative;
+    color: var(--color-white);
+    overflow: hidden;
+    min-height: 360px;
+}
+
+/* Background collage grid - Tamaños iguales con más fotos */
+.hero-collage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* Más columnas para más fotos */
+    grid-auto-rows: 18vh; /* Altura fija basada en viewport height */
+    gap: 6px; /* Gap más pequeño para acomodar más fotos */
+    opacity: 0.75; /* Un poco más transparente para mejor legibilidad */
+    pointer-events: none;
+    z-index: 0;
+    padding: 10px; /* Pequeño padding interno */
+}
+
+.hero-collage .collage-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover para llenar completamente el espacio */
+    background-color: rgba(248, 249, 250, 0.1);
+    border-radius: 4px; /* Border radius más pequeño */
+    filter: saturate(0.8) contrast(0.9) brightness(1.1);
+    grid-column: span 1; /* Cada foto ocupa exactamente 1 columna */
+    grid-row: span 1; /* Cada foto ocupa exactamente 1 fila */
+    transition: opacity 0.3s ease;
+}
+
+/* Hover effect sutil para las fotos */
+.hero-collage .collage-item:hover {
+    opacity: 0.9;
+}
+
+/* Ensure content stays readable */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(44,42,40,0.78);
+    z-index: 1;
+}
+
+
+
+/* Grid uniforme - todas las fotos del mismo tamaño */
+
+/* Overlay for readability (no gradients) */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(44,42,40,0.78);
+    z-index: 1;
+}
+
+/* Keep hero content above overlay */
+.hero-simplified .container { position: relative; z-index: 2; }
+.italian-stripe { z-index: 3; }
+.hero-divider { z-index: 2; }
+
+/* Accent stripe at the top */
+.italian-stripe {
+    height: 4px;
+    width: 100%;
+    background: var(--color-accent);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Hero content styles (compact) */
+.hero-title {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0.9;
+    max-width: 90%;
+}
+
+.hero-tagline {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: rgba(255,255,255,0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+/* Hero buttons - simplified */
+.hero-btn-primary {
+    margin-top: 2rem;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    border: none;
+}
+.hero-btn-primary:hover {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    transform: translateY(-2px);
+}
+
+.hero-btn-secondary {
+    margin-top: 2rem;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    color: var(--color-white);
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.hero-btn-secondary:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-color: var(--color-white);
+    transform: translateY(-2px);
+}
+
+/* Trust indicators - properly centered */
+.hero-trust-indicators { 
+    display: flex; 
+    justify-content: center; 
+    margin-top: 2rem; 
+    font-size: 1rem; 
+}
+.hero-trust-indicators .d-flex {
+    justify-content: center !important;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.trust-item { 
+    color: rgba(255,255,255,0.9); 
+    white-space: nowrap;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+.trust-item:hover {
+    background-color: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+}
+.trust-item i { 
+    color: var(--color-accent); 
+    margin-right: 0.5rem;
+    font-size: 1.1em;
+}
+
+/* Optional hero image wrapper (kept for compatibility) */
+.hero-image-container { display: flex; justify-content: center; }
+.hero-image-wrapper {
+    position: relative; max-width: 90%; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    min-height: 300px; background-color: rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center;
+}
+.hero-image-wrapper img { display: block; object-fit: cover; max-height: 400px; }
+.hero-image-wrapper:empty::after { content: 'Coimpres Cuba'; font-size: 1.5rem; color: rgba(255,255,255,0.5); font-style: italic; }
+
+/* Divider */
+.hero-divider { position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; background: var(--color-background); opacity: 0.8; }
+
+/* Responsive adjustments para grid uniforme */
+@media (max-width: 1199.98px) {
+  .hero-collage { 
+    grid-template-columns: repeat(10, 1fr); /* Menos columnas en tablets grandes */
+    grid-auto-rows: 7vh; 
+    gap: 3px; 
+  }
+  .hero-title { font-size: 2.1rem; }
+}
+
+@media (max-width: 991.98px) {
+  .hero-collage { 
+    grid-template-columns: repeat(8, 1fr); /* 8 columnas en tablets */
+    grid-auto-rows: 6vh; 
+    gap: 3px; 
+    opacity: 0.55; /* Un poco más transparente */
+  }
+  .hero-overlay { background: rgba(44,42,40,0.82); }
+  .hero-simplified { min-height: 340px; }
+  .hero-title { font-size: 1.9rem; }
+}
+
+@media (max-width: 767.98px) {
+  .hero-collage { 
+    grid-template-columns: repeat(6, 1fr); /* 6 columnas en móviles */
+    grid-auto-rows: 6vh; /* Filas optimizadas */
+    gap: 1px; /* Gap más pequeño */
+    opacity: 0.5; /* Más visible */
+    padding: 3px; /* Padding reducido */
+    min-height: 65vh; /* Altura reducida */
+  }
+  .hero-collage .collage-item { 
+    border-radius: 3px; 
+  }
+  .hero-content-wrapper { text-align: center; padding: 1.5rem 0 0.75rem; }
+  .hero-title { font-size: 1.7rem; }
+  .hero-simplified { min-height: 65vh; /* Altura reducida para tablet */ }
+  
+  /* Trust indicators tablet centering */
+  .hero-trust-indicators {
+    margin-top: 1.75rem;
+  }
+  .hero-trust-indicators .d-flex {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .trust-item {
+    font-size: 0.95rem;
+    padding: 0.45rem 0.9rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .hero-collage { 
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas en móviles pequeños */
+    grid-auto-rows: 5vh; /* Filas más pequeñas optimizadas */
+    gap: 1px; /* Gap más pequeño para aprovechar mejor el espacio */
+    opacity: 0.4; /* Ligeramente más visible */
+    padding: 2px; /* Padding reducido */
+    min-height: 70vh; /* Altura reducida pero suficiente */
+  }
+  .hero-collage .collage-item { 
+    border-radius: 2px; 
+  }
+  
+  .hero-simplified { min-height: 70vh; /* Altura reducida en móvil */ }
+  .hero-title { font-size: 1.6rem; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100%; margin-bottom: 0.5rem; padding: 0.7rem 1rem; }
+  
+  /* Trust indicators mobile centering */
+  .hero-trust-indicators {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+  .hero-trust-indicators .d-flex {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .trust-item {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    min-width: 180px;
+    justify-content: center;
+  }
+}
