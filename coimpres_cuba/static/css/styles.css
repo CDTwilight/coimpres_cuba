@@ -1,0 +1,699 @@
+/* Import Lato font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+
+/* Nueva paleta de colores */
+:root {
+    --color-primary: #2C2A28; /* Color principal para texto y encabezados */
+    --color-accent: #9fa322; /* Color de acento, botones secundarios */
+    --color-background: #F9F6F1; /* Color de fondo claro */
+    --color-white: #FFFFFF; /* Blanco puro para contraste */
+    
+    /* Mantenemos estas variables por compatibilidad, pero usando los nuevos colores */
+    --italian-green: #9fa322; /* Reemplazado por el color de acento */
+    --italian-white: #F9F6F1; /* Reemplazado por el color de fondo */
+    --italian-red: #2C2A28; /* Reemplazado por el color primario para mantener la compatibilidad */
+}
+
+/* General Styles */
+body {
+    font-family: 'Lato', sans-serif;
+    color: var(--color-primary);
+    background-color: var(--color-background);
+}
+
+/* Header Styles */
+header {
+    box-shadow: 0 2px 4px rgba(44, 42, 40, 0.1); /* Color primario con opacidad */
+    background-color: var(--color-white);
+}
+
+/* Custom Section Styling */
+.hero-section {
+    background: var(--color-primary);
+    padding: 4rem 0;
+    color: var(--color-white);
+}
+
+.section-title {
+    color: var(--color-accent);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Card Styling */
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    box-shadow: 0 2px 10px rgba(44, 42, 40, 0.08); /* Color primario con opacidad */
+    background-color: var(--color-white);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(44, 42, 40, 0.12); /* Color primario con opacidad */
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Navbar hover effects */
+.navbar-nav .nav-link {
+    position: relative;
+    padding: 0.5rem 1rem;
+    margin: 0 0.2rem;
+}
+
+.navbar-nav .nav-link:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover:after,
+.navbar-nav .nav-link.active:after {
+    width: 100%;
+}
+
+/* WhatsApp button */
+.btn-whatsapp {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-whatsapp:hover {
+    background-color: #9fa322; /* Versión más oscura del color de acento */
+    color: var(--color-white);
+    transform: scale(1.05);
+}
+
+/* Footer Styling */
+footer {
+    border-top: 1px solid var(--color-accent);
+    background-color: var(--color-background);
+}
+
+/* Language Switcher */
+.btn-group .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Logo Image Styling */
+.logo-img {
+    height: 90px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    transition: transform 0.2s;
+    content: url('../img/logo_3.png'); /* Usar logo_3.png como fuente de imagen */
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .logo-img {
+        height: 90px;
+        max-width: 1200px;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+        padding: 3rem 0;
+    }
+    
+    .hero-section img {
+        margin-top: 2rem;
+    }
+}
+
+/* Animation for Featured Products */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#featured-products .card {
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+#featured-products .card:nth-child(1) { animation-delay: 0.1s; }
+#featured-products .card:nth-child(2) { animation-delay: 0.3s; }
+#featured-products .card:nth-child(3) { animation-delay: 0.5s; }
+
+/* Category Cards */
+.category-card {
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 12px rgba(44, 42, 40, 0.12); /* Color primario con opacidad */
+    background-color: var(--color-white);
+}
+
+.category-card:hover {
+    transform: translateY(-8px);
+}
+
+.category-card img {
+    transition: transform 0.5s ease;
+}
+
+.category-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Product Card improvements */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: var(--color-white);
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(44, 42, 40, 0.12) !important; /* Color primario con opacidad */
+}
+
+/* Optimización de grid de productos */
+.product-card-item .card {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-item .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-item .card-body .mt-auto {
+    margin-top: auto;
+}
+
+/* Ajuste menor de imágenes para uniformidad */
+.product-card-item .card-img-top {
+    aspect-ratio: 4/3;
+    object-fit: cover;
+}
+
+/* Grid de productos móvil - 2 columnas */
+@media (max-width: 991.98px) {
+    .row-cols-md-3 > .col,
+    .row-cols-md-4 > .col {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+    
+    /* Ajustes para cards más compactas en móvil */
+    .product-card-item .card-title {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .product-card-item .card-body {
+        padding: 0.75rem;
+    }
+    
+    .product-card-item .card-text {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        display: -webkit-box;
+        display: box;
+        -webkit-box-orient: vertical;
+        box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .product-card-item .btn {
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+        font-size: 0.75rem;
+    }
+    
+    .product-card-item .badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+    }
+}
+
+/* Ajuste específico para dispositivos pequeños */
+@media (max-width: 575.98px) {
+    /* Forzar 2 columnas incluso en muy pequeños */
+    .row-cols-2 > .col {
+        flex: 0 0 auto;
+        width: 50% !important;
+    }
+    
+    /* Imagen más pequeña */
+    .product-card-item .card-img-top {
+        height: 130px !important;
+    }
+    
+    /* Reducción adicional para pantallas muy pequeñas */
+    .product-card-item .card-title {
+        font-size: 0.85rem;
+    }
+}
+
+/* Values section */
+.value-icon {
+    transition: transform 0.3s ease;
+}
+
+.value-icon:hover {
+    transform: scale(1.15);
+}
+
+/* Hover effects for links and buttons */
+.btn-primary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-white);
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    background-color: #9fa322 !important; /* Versión más oscura del color de acento */
+    border-color: #9fa322 !important;
+    color: var(--color-white) !important;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover, a:focus {
+    color: #9fa322; /* Versión más oscura del color de acento */
+    text-decoration: underline;
+}
+
+/* Product detail tabs */
+.nav-tabs .nav-link.active {
+    border-bottom: 2px solid var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+/* Category badges */
+.category-badge {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    border-radius: 30px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* Breadcrumbs */
+.breadcrumb-item a {
+    color: var(--color-accent);
+}
+
+/* ==================== TIPOGRAFÍA Y JERARQUÍA ELEGANTE ==================== */
+
+/* Typography - Lato font weights */
+.font-light {
+    font-weight: 300;
+}
+
+.font-regular {
+    font-weight: 400;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-black {
+    font-weight: 900;
+}
+
+/* Jerarquía de títulos mejorada */
+h1, .h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    font-family: 'Lato', sans-serif;
+}
+
+h2, .h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    line-height: 1.3;
+    margin-bottom: 1.25rem;
+    font-family: 'Lato', sans-serif;
+}
+
+h3, .h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    font-family: 'Lato', sans-serif;
+}
+
+h4, .h4 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    font-family: 'Lato', sans-serif;
+}
+
+h5, .h5 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    font-family: 'Lato', sans-serif;
+}
+
+h6, .h6 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Títulos con acento */
+.title-accent {
+    color: var(--color-accent);
+}
+
+.title-with-underline {
+    position: relative;
+    display: inline-block;
+}
+
+.title-with-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+.title-with-underline.full-width::after {
+    width: 100%;
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+    h1, .h1 {
+        font-size: 2rem;
+    }
+    
+    h2, .h2 {
+        font-size: 1.75rem;
+    }
+    
+    h3, .h3 {
+        font-size: 1.35rem;
+    }
+    
+    h4, .h4 {
+        font-size: 1.15rem;
+    }
+    
+    h5, .h5 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    h1, .h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2, .h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3, .h3 {
+        font-size: 1.25rem;
+    }
+}
+
+/* Clases adicionales para la nueva paleta de colores */
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+.text-accent {
+    color: var(--color-accent) !important;
+}
+
+.bg-primary-custom {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.bg-accent {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+}
+
+.bg-light-custom {
+    background-color: var(--color-background);
+}
+
+/* Filter Panel */
+.filter-panel {
+    background: var(--color-white);
+    border: 1px solid rgba(44,42,40,0.08);
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(44,42,40,0.06);
+}
+
+.filter-panel-header {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 0.85rem 1rem;
+}
+
+.filter-panel-header h6 {
+    letter-spacing: .05em;
+    font-size: .75rem;
+}
+
+.btn-toggle-filters {
+    background: rgba(255,255,255,0.15);
+    color: var(--color-white);
+    border: none;
+    font-size: .7rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: .25rem .6rem;
+    border-radius: 20px;
+}
+
+.btn-toggle-filters:hover {
+    background: rgba(255,255,255,0.28);
+}
+
+.filter-panel-body {
+    padding: 1rem 1rem 1.2rem;
+}
+
+/* Animación suave para el collapse */
+.filter-panel-body.collapse {
+    transition: all 0.35s ease-in-out;
+}
+
+.filters-form .filter-group {
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px dashed rgba(44,42,40,0.12);
+}
+
+.filters-form .filter-group:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0.3rem;
+    padding-bottom: 0;
+}
+
+.filters-form label {
+    font-size: .65rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .9;
+    margin-bottom: .25rem;
+}
+
+.filters-form .form-control,
+.filters-form .form-select {
+    border-radius: 10px;
+    border: 1px solid rgba(44,42,40,0.18);
+    font-size: .8rem;
+    background-color: var(--color-background);
+    transition: border-color .2s, background-color .2s;
+}
+
+.filters-form .form-control:focus,
+.filters-form .form-select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(159,163,34,0.25);
+    background-color: var(--color-white);
+}
+
+.filters-form .form-control:hover,
+.filters-form .form-select:hover {
+    border-color: var(--color-accent);
+}
+
+.filters-form .btn-outline-secondary {
+    --bs-btn-color: var(--color-primary);
+    --bs-btn-border-color: rgba(44,42,40,0.25);
+    --bs-btn-hover-bg: var(--color-accent);
+    --bs-btn-hover-border-color: var(--color-accent);
+    --bs-btn-hover-color: var(--color-white);
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.filters-form .btn-primary {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    border-radius: 30px;
+    padding: .45rem 1rem;
+}
+
+/* Scroll interno si crecen los filtros */
+@media (min-height: 700px) and (min-width: 992px) {
+    .filter-panel {
+        position: sticky;
+        top: 90px;
+    }
+}
+
+/* Móvil: colapsable */
+@media (max-width: 991.98px) {
+    .filter-panel-body:not(.show) {
+        display: none;
+    }
+    
+    .filter-panel-body.collapsing {
+        height: 0;
+        overflow: hidden;
+        transition: height 0.35s ease;
+    }
+}
+
+/* ==================== PAGINACIÓN PÚBLICA ==================== */
+.pagination {
+    --bs-pagination-padding-x: 0.75rem;
+    --bs-pagination-padding-y: 0.5rem;
+    --bs-pagination-font-size: 1rem;
+    --bs-pagination-color: var(--color-primary);
+    --bs-pagination-bg: var(--color-white);
+    --bs-pagination-border-width: 1px;
+    --bs-pagination-border-color: #dee2e6;
+    --bs-pagination-border-radius: 0.375rem;
+    --bs-pagination-hover-color: var(--color-white);
+    --bs-pagination-hover-bg: var(--color-accent);
+    --bs-pagination-hover-border-color: var(--color-accent);
+    --bs-pagination-focus-color: var(--color-accent);
+    --bs-pagination-focus-bg: #e9ecef;
+    --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(159, 163, 34, 0.25);
+    --bs-pagination-active-color: var(--color-white);
+    --bs-pagination-active-bg: var(--color-accent);
+    --bs-pagination-active-border-color: var(--color-accent);
+    --bs-pagination-disabled-color: #6c757d;
+    --bs-pagination-disabled-bg: var(--color-white);
+    --bs-pagination-disabled-border-color: #dee2e6;
+}
+
+.page-link {
+    color: var(--color-primary);
+    background-color: var(--color-white);
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.page-link:hover {
+    color: var(--color-white);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(159, 163, 34, 0.2);
+}
+
+.page-link:focus {
+    color: var(--color-accent);
+    background-color: #e9ecef;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 0.25rem rgba(159, 163, 34, 0.25);
+}
+
+.page-item.active .page-link {
+    color: var(--color-white);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(159, 163, 34, 0.3);
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: var(--color-white);
+    border-color: #dee2e6;
+}
+
+/* Estilos específicos para iconos en paginación */
+.pagination .bi {
+    font-size: 0.875rem;
+}
+
+/* Responsive para paginación */
+@media (max-width: 576px) {
+    .pagination {
+        --bs-pagination-padding-x: 0.5rem;
+        --bs-pagination-padding-y: 0.375rem;
+        --bs-pagination-font-size: 0.875rem;
+    }
+    
+    .page-link {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Ocultar texto en móvil, solo mostrar iconos */
+    .pagination .page-link .bi + span {
+        display: none;
+    }
+}
