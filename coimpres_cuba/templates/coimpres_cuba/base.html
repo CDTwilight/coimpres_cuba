@@ -1,0 +1,355 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}{{ seo_title|default:"COIMPRE S.r.l. - Productos Made in Italy" }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ seo_description|default:"COIMPRE S.r.l. - Importador oficial de productos italianos de alta calidad en Cuba desde 2014. Productos Made in Italy para tu hogar y negocio." }}{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}{{ seo_keywords|default:"productos italianos, importación Cuba, made in Italy, COIMPRE, productos de calidad, Italia, La Habana" }}{% endblock %}">
+    <meta name="author" content="COIMPRE S.r.l.">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{% block og_title %}{{ seo_title|default:"COIMPRE S.r.l. - Productos Made in Italy" }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ seo_description|default:"Importador oficial de productos italianos de alta calidad en Cuba desde 2014." }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo_3.png' %}{% endblock %}">
+    <meta property="og:site_name" content="COIMPRE S.r.l.">
+    <meta property="og:locale" content="{% if lang == 'es' %}es_ES{% elif lang == 'en' %}en_US{% elif lang == 'it' %}it_IT{% else %}es_ES{% endif %}">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ seo_title|default:"COIMPRE S.r.l. - Productos Made in Italy" }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ seo_description|default:"Importador oficial de productos italianos de alta calidad en Cuba desde 2014." }}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo_3.png' %}{% endblock %}">
+    
+    <!-- Hreflang Tags for Multilingual SEO -->
+    <link rel="alternate" hreflang="es" href="{{ request.scheme }}://{{ request.get_host }}{% url 'change_language' %}?lang=es&next={{ request.path }}">
+    <link rel="alternate" hreflang="en" href="{{ request.scheme }}://{{ request.get_host }}{% url 'change_language' %}?lang=en&next={{ request.path }}">
+    <link rel="alternate" hreflang="it" href="{{ request.scheme }}://{{ request.get_host }}{% url 'change_language' %}?lang=it&next={{ request.path }}">
+    <link rel="alternate" hreflang="x-default" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'img/logo_3.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/logo_3.png' %}">
+    
+    <!-- DNS Prefetch para mejorar conexiones -->
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <!-- Preconnect para recursos críticos -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <!-- Preloader CSS - Cargar PRIMERO para evitar FOUC -->
+    <link rel="stylesheet" href="{% static 'css/preloader.css' %}">
+    
+    <!-- Bootstrap CSS con preload -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></noscript>
+    
+    <!-- Bootstrap Icons con preload -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"></noscript>
+    
+    <!-- Animate.css con preload (no crítico) -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"></noscript>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "COIMPRE S.r.l.",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo_3.png' %}",
+        "description": "Importador oficial de productos italianos de alta calidad en Cuba desde 2014",
+        "foundingDate": "2014",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Miramar",
+            "addressRegion": "La Habana",
+            "addressCountry": "CU"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+53-72141480",
+            "contactType": "customer service",
+            "availableLanguage": ["Spanish", "English", "Italian"]
+        },
+        "sameAs": [
+            "https://www.facebook.com/profile.php?id=61579235338321",
+            "https://www.instagram.com/coimpresrl_cuba/"
+        ]
+    }
+    </script>
+    {% block extra_structured_data %}{% endblock %}
+    
+    <!-- Preloader Script - Cada 12 horas por dispositivo -->
+    <script>
+        // Configuración: preloader cada 12 horas
+        const HOURS_TO_RESET = 12; // Cada 12 horas
+        const now = new Date().getTime();
+        const lastPreloaderShow = localStorage.getItem('coimpre_last_preloader');
+        const hoursInMs = HOURS_TO_RESET * 60 * 60 * 1000; // Convertir horas a milisegundos
+        
+        // Verificar si han pasado 12 horas desde la última vez
+        if (!lastPreloaderShow || (now - parseInt(lastPreloaderShow)) >= hoursInMs) {
+            // Guardar el timestamp actual
+            localStorage.setItem('coimpre_last_preloader', now.toString());
+            // Permitir que el preloader.js se ejecute
+            window.showPreloader = true;
+            
+            // Debug info (opcional - puedes remover en producción)
+            console.log('🎬 COIMPRE Preloader: Mostrando (cada 12 horas)');
+        } else {
+            // Calcular tiempo restante hasta el próximo preloader
+            const timeRemaining = hoursInMs - (now - parseInt(lastPreloaderShow));
+            const hoursRemaining = Math.floor(timeRemaining / (1000 * 60 * 60));
+            const minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            
+            // No mostrar preloader
+            window.showPreloader = false;
+            
+            // Debug info (opcional - puedes remover en producción)
+        }
+    </script>
+</head>
+<body>
+    <!-- Enhanced Header: Elegant premium look for Italian import company -->
+    <header class="enhanced-header position-relative">
+        <!-- Decorative accent stripe -->
+        <div class="italian-accent-stripe"></div>
+        
+        <!-- Main header content -->
+        <div class="container py-0">
+            <!-- Upper header: Logo & Contact Info -->
+            <div class="header-main py-3">
+                <div class="row align-items-center">
+                    <!-- Logo container with enhanced styling -->
+                    <div class="col-lg-4 col-md-3 col-4">
+                        <a class="header-logo-container" href="{% url 'home' %}">
+                            <div class="logo-wrapper">
+                                <img src="{% static 'img/logo_3.png' %}" alt="Coimpres Cuba Logo" class="logo-img" />
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Contact & Business Info - Desktop version with phone -->
+                    <div class="col-lg-5 col-md-6 d-none d-md-block">
+                        <div class="header-contact-info d-flex justify-content-center">
+                            <div class="contact-info-item me-4">
+                                <div class="contact-icon">
+                                    
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                    
+                                </div>
+                                <div class="contact-text">
+                                    <span class="contact-label">{{ i18n.office_cuba|default:"Oficina Cuba" }}</span>
+                                    <span class="contact-value">{{ i18n.miramar_havana|default:"Miramar, La Habana" }}</span>
+                                </div>
+                            </div>
+                            <div class="contact-info-item">
+                                <div class="contact-icon">
+                                    <i class="bi bi-telephone-fill"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="contact-label">{{ i18n.contact|default:"Contacto" }}</span>
+                                    <span class="contact-value">+53 72141480</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Social + Contact + Language (exactly as diagram) -->
+                    <div class="col-lg-2 col-md-2 col-8 d-flex justify-content-end">
+                        <div class="header-right-section">
+                            <!-- ROW 1: Social Media Icons (📱 Facebook 📷 Instagram) -->
+                            <div class="header-social-row">
+                                <a href="https://www.facebook.com/profile.php?id=61579235338321" class="social-icon-circle" aria-label="Facebook">
+                                    <i class="bi bi-facebook"></i>
+                                </a>
+                                <a href="https://www.instagram.com/coimpresrl_cuba/" class="social-icon-circle" aria-label="Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                            </div>
+                            
+                            <!-- ROW 2: Contact Icons - Mobile only (📍 Location ✉️ Email) -->
+                            
+                            
+                            <!-- ROW 3: Language Selector (🌐 ES EN IT) -->
+                            <div class="header-language-row">
+                                <a href="{% url 'change_language' %}?lang=es" class="lang-btn {% if lang == 'es' %}active{% endif %}">ES</a>
+                                <a href="{% url 'change_language' %}?lang=en" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+                                <a href="{% url 'change_language' %}?lang=it" class="lang-btn {% if lang == 'it' %}active{% endif %}">IT</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation with premium styling -->
+        <nav class="enhanced-nav">
+            <div class="container">
+                <div class="d-flex align-items-center justify-content-between py-2">
+                    <!-- Location Badge (Mobile Only) -->
+                    <div class="location-badge d-flex d-md-none align-items-center">
+                        
+                            <span class="font-bold">Miramar, La Habana</span>
+                    </div>
+                    
+                    <!-- Full Location (Desktop Only) -->
+                    <div class="location-full d-none d-md-flex align-items-center">
+                        <div class="location-icon">
+                                <i class="bi bi-geo-alt-fill text-accent me-2"></i>
+                             
+                            </div>
+                        <div>
+                            <span class="location-text">{{ i18n.company_tagline|default:"COIMPRE S.r.l. - Productos Made in Italy desde 2014" }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile Navigation Toggle -->
+                    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    
+                    <!-- Navigation Links -->
+                    <div class="navbar-collapse collapse-mobile d-lg-flex align-items-center justify-content-center" id="navbarNav">
+                        <ul class="navbar-nav d-flex align-items-center">
+                            {% if user.is_authenticated and user.is_staff %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if '/productos/admin/' in request.path %}active{% endif %}" href="{% url 'productos:admin_panel' %}" title="Panel de Administración">
+                                    <i class="bi bi-gear-fill"></i> Admin
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
+                                     {{ i18n.home|default:"Inicio" }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/productos/' %}active{% endif %}" href="/productos/">
+                                    {{ i18n.products|default:"Productos" }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if '/productos/proveedores/' in request.path %}active{% endif %}" href="{% url 'productos:proveedor_list' %}">
+                                    {{ i18n.suppliers|default:"Proveedores" }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/contact/' %}active{% endif %}" href="/contact/">
+                                    {{ i18n.exclusive_orders|default:"Pedidos Exclusivos" }}
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <!-- User Authentication Info -->
+                        {% if user.is_authenticated and user.is_staff %}
+                        <div class="navbar-auth-info d-flex align-items-center ms-lg-3">
+                            <div class="auth-user-info d-none d-lg-flex align-items-center me-3">
+                                <i class="bi bi-person-check-fill text-success me-2"></i>
+                                <span class="text-white small">{{ user.get_full_name|default:user.username }}</span>
+                            </div>
+                            <a href="{% url 'productos:admin_logout' %}" class="btn btn-outline-light btn-sm" title="Cerrar Sesión">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span class="d-none d-lg-inline ms-1">Logout</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row py-3">
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase mb-3">{{ i18n.office_cuba|default:"Oficina Cuba" }}</h5>
+                    <p class="mb-3">{{ i18n.footer_description|default:"Importador oficial de productos italianos de alta calidad en Cuba, ofreciendo lo mejor de Italia para tu hogar y negocio." }}</p>
+                    <div class="d-flex social-icons">
+                        <a href="https://www.facebook.com/profile.php?id=61579235338321" class="me-3 text-white"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="https://www.instagram.com/coimpresrl_cuba/" class="me-3 text-white"><i class="bi bi-instagram fs-5"></i></a>
+        <!--            <a href="#" class="text-white"><i class="bi bi-whatsapp fs-5"></i></a> -->
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase mb-3">{{ i18n.quick_links|default:"Enlaces Rápidos" }}</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-white text-decoration-none"><i class="bi bi-chevron-right"></i> {{ i18n.home|default:"Inicio" }}</a></li>
+                        <li class="mb-2"><a href="{% url 'productos:product_list' %}" class="text-white text-decoration-none"><i class="bi bi-chevron-right"></i> {{ i18n.products|default:"Productos" }}</a></li>
+                        <li class="mb-2"><a href="{% url 'productos:proveedor_list' %}" class="text-white text-decoration-none"><i class="bi bi-chevron-right"></i> {{ i18n.suppliers|default:"Proveedores" }}</a></li>
+                        <li><a href="/contact/" class="text-white text-decoration-none"><i class="bi bi-chevron-right"></i> {{ i18n.exclusive_orders|default:"Pedidos Exclusivos" }}</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-uppercase mb-3">{{ i18n.contact|default:"Contacto" }}</h5>
+                    <p class="mb-2">
+        
+                            <i class="bi bi-geo-alt-fill me-2"></i> <a/>{{ i18n.miramar_havana|default:"Miramar, La Habana" }}</p>
+                    <p class="mb-2"><i class="bi bi-telephone-fill me-2"></i> +53 72141480</p>
+                    <p class="mb-2"><i class="bi bi-envelope-fill me-2"></i> coimpresrl@gmail.com</p>
+                </div>
+            </div>
+
+            <div class="row pt-3 border-top border-secondary">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 COIMPRE S.r.l. {{ i18n.rights|default:"Todos los derechos reservados" }}</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <i class="bi bi-globe2 text-accent me-2"></i>
+                        <span class="align-middle">{{ i18n.made_with_love|default:"Hecho con" }} <i class="bi bi-heart-fill text-danger"></i> {{ i18n.in_italy|default:"en Italia" }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="row pt-2 border-top border-secondary mt-2">
+                <div class="col-12 text-center">
+                    <p class="mb-0 small text">
+                        <i class="bi bi-code-slash me-1"></i>
+                        Desarrollado por <a href="https://manulynx.github.io/M-C-Dev-Studio/" class="text-accent text-decoration-none fw-semibold">M&C Dev Studio</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle con defer para no bloquear -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <!-- Custom JS con defer -->
+    <script src="{% static 'js/main.js' %}" defer></script>
+    <!-- Mobile Navigation Enhancement con defer -->
+    <script src="{% static 'js/mobile-nav.js' %}" defer></script>
+    <!-- Preloader JS - cargar inmediatamente -->
+    <script src="{% static 'js/preloader.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>
