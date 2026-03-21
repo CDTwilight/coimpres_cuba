@@ -1,0 +1,456 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Proveedores{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<style>
+/* CSS crítico inline para móvil - Variables exactas de admin.css */
+:root {
+    --color-primary: #2C2A28 !important;
+    --color-accent: #9fa322 !important;
+    --color-background: #F9F6F1 !important;
+    --color-white: #FFFFFF !important;
+    --color-light-gray: #f8f9fa !important;
+    --color-border: #e1e5e9 !important;
+    --color-text-muted: #6c757d !important;
+    --color-success: #f8f9fa !important;
+    --color-danger: #f8f9fa !important;
+    --color-warning: #ffc107 !important;
+    --shadow-soft: 0 2px 10px rgba(44, 42, 40, 0.08) !important;
+    --shadow-hover: 0 5px 15px rgba(44, 42, 40, 0.12) !important;
+    --border-radius: 10px !important;
+    --border-radius-sm: 6px !important;
+    --transition: all 0.3s ease !important;
+}
+
+/* Forzar colores exactos del admin.css solo para contenido admin */
+.admin-container {
+    background-color: var(--color-background) !important;
+    color: var(--color-primary) !important;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Header específico del admin */
+.admin-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(44, 42, 40, 0.9) 100%) !important;
+    color: var(--color-white) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.admin-header h1 {
+    color: var(--color-white) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-header p {
+    color: var(--color-white) !important;
+    opacity: 0.9 !important;
+}
+
+/* Cards y secciones */
+.admin-section {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.card,
+.table-responsive,
+.admin-filters,
+.modal-content {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+/* Mobile cards específicas */
+.mobile-card {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+    box-shadow: var(--shadow-soft) !important;
+    color: var(--color-primary) !important;
+}
+
+.mobile-card h3 {
+    color: var(--color-primary) !important;
+}
+
+.mobile-card-field strong {
+    color: var(--color-primary) !important;
+}
+
+/* Admin nav específico */
+.admin-nav {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.admin-nav .nav-link {
+    color: var(--color-primary) !important;
+}
+
+.admin-nav .nav-link.active {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+/* Tablas */
+.admin-table {
+    background-color: var(--color-white) !important;
+}
+
+.admin-table th,
+.admin-table td {
+    border-color: var(--color-border) !important;
+}
+
+/* Thumbnails */
+.product-thumb {
+    border-radius: var(--border-radius-sm) !important;
+}
+
+.no-image {
+    background: var(--color-light-gray) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+}
+
+/* Botones de acción con fondo gris excepto eliminar */
+.action-buttons .btn:not(.btn-danger),
+.mobile-card-actions .btn:not(.btn-danger) {
+    background-color: #f8f9fa !important;
+    color: var(--color-primary) !important;
+    border-color: #e1e5e9 !important;
+}
+
+.action-buttons .btn:not(.btn-danger):hover,
+.mobile-card-actions .btn:not(.btn-danger):hover {
+    background-color: #e9ecef !important;
+    color: var(--color-primary) !important;
+    border-color: #d6d9dc !important;
+}
+
+/* Mantener rojo para botones de eliminar */
+.action-buttons .btn-danger,
+.mobile-card-actions .btn-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border-color: #dc3545 !important;
+}
+
+.action-buttons .btn-danger:hover,
+.mobile-card-actions .btn-danger:hover {
+    background-color: #c82333 !important;
+    color: #ffffff !important;
+    border-color: #bd2130 !important;
+}
+
+/* Dark mode override solo para contenido admin */
+@media (prefers-color-scheme: dark) {
+    .admin-container,
+    .admin-section,
+    .card,
+    .modal-content,
+    .mobile-card,
+    .table-responsive,
+    .admin-filters {
+        background-color: var(--color-white) !important;
+        color: var(--color-primary) !important;
+    }
+    
+    .admin-nav {
+        background-color: var(--color-white) !important;
+    }
+}
+
+/* Mobile específico */
+@media (max-width: 768px) {
+    .product-thumb {
+        width: 35px !important;
+        height: 35px !important;
+        object-fit: cover !important;
+        border-radius: var(--border-radius-sm) !important;
+    }
+    
+    .no-image {
+        width: 35px !important;
+        height: 35px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: var(--color-light-gray) !important;
+        border: 1px solid var(--color-border) !important;
+        border-radius: var(--border-radius-sm) !important;
+        font-size: 14px !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    {% include 'productos/partials/admin_header.html' with page_title="🏭 Gestión de Proveedores" page_description="Administra los proveedores de productos" %}
+    
+    <!-- Navigation Menu -->
+    <div class="admin-nav">
+        <a href="{% url 'productos:admin_panel' %}" class="nav-link"> Productos</a>
+        <a href="{% url 'productos:manage_proveedores' %}" class="nav-link active"> Proveedores</a>
+        <a href="{% url 'productos:manage_categories' %}" class="nav-link"> Categorías</a>
+        <a href="{% url 'productos:manage_subcategories' %}" class="nav-link"> Subcategorías</a>
+        <a href="{% url 'productos:manage_estatus' %}" class="nav-link"> Estatus</a>
+    </div>
+    
+    <!-- Mensajes de éxito/error -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>Lista de Proveedores</h2>
+            <button class="btn btn-primary" onclick="showAddForm()"> Agregar Proveedor</button>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Logo</th>
+                        <th>Nombre</th>
+                        <th>ID Único</th>
+                        <th>Catálogo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proveedor in proveedores %}
+                    <tr>
+                        <td>
+                            {% if proveedor.logo %}
+                                <img src="{{ proveedor.logo.url }}" alt="{{ proveedor.name }}" class="product-thumb">
+                            {% else %}
+                                <div class="no-image">🏭</div>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ proveedor.name }}</strong></td>
+                        <td><code>{{ proveedor.id_unico }}</code></td>
+                        <td>
+                            {% if proveedor.catalogo %}
+                                <a href="{{ proveedor.catalogo.url }}" target="_blank" class="btn btn-sm btn-outline-primary">📄 Ver PDF</a>
+                            {% else %}
+                                <span class="text-muted">Sin catálogo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'productos:edit_proveedor' proveedor.pk %}" class="btn btn-sm btn-warning" title="Editar">✏️</a>
+                                <button class="btn btn-sm btn-danger" title="Eliminar" data-item-id="{{ proveedor.pk }}" data-item-name="{{ proveedor.name }}" data-item-type="proveedor" onclick="deleteItem(this.dataset.itemId, this.dataset.itemName, this.dataset.itemType)">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No hay proveedores registrados</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mobile Cards View -->
+        <div class="table-mobile-cards">
+            {% for proveedor in proveedores %}
+            <div class="mobile-card">
+                <div class="mobile-card-header">
+                    {% if proveedor.logo %}
+                        <img src="{{ proveedor.logo.url }}" alt="{{ proveedor.name }}" class="mobile-card-thumb">
+                    {% else %}
+                        <div class="no-image" style="width: 60px; height: 60px; font-size: 24px;">🏭</div>
+                    {% endif %}
+                    <div class="mobile-card-title">
+                        <h3>{{ proveedor.name }}</h3>
+                        <p>ID: {{ proveedor.id_unico }}</p>
+                    </div>
+                </div>
+                <div class="mobile-card-body">
+                    <div class="mobile-card-field">
+                        <strong>Catálogo</strong>
+                        <span>
+                            {% if proveedor.catalogo %}
+                                <a href="{{ proveedor.catalogo.url }}" target="_blank" class="btn btn-sm btn-outline-primary">📄 Ver PDF</a>
+                            {% else %}
+                                Sin catálogo
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="mobile-card-actions">
+                    <a href="{% url 'productos:edit_proveedor' proveedor.pk %}" class="btn btn-sm btn-warning">✏️ Editar</a>
+                    <button class="btn btn-sm btn-danger" data-item-id="{{ proveedor.pk }}" data-item-name="{{ proveedor.name }}" data-item-type="proveedor" onclick="deleteItem(this.dataset.itemId, this.dataset.itemName, this.dataset.itemType)">🗑️ Eliminar</button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center text-muted" style="padding: 40px;">
+                No hay proveedores registrados
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Paginación -->
+        {% if is_paginated %}
+        <div class="admin-pagination mt-4">
+            <nav aria-label="Navegación de páginas del admin" class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="pagination-info mb-2 mb-md-0">
+                    <small class="text-muted">
+                        Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} proveedores
+                    </small>
+                </div>
+                
+                <ul class="pagination mb-0">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" title="Primera página">
+                                ≪
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" title="Página anterior">
+                                ‹
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" title="Página siguiente">
+                                ›
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" title="Última página">
+                                ≫
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Add Form Modal -->
+    <div id="addModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Agregar Nuevo Proveedor</h3>
+                <button onclick="hideAddForm()" class="close-btn">✕</button>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'productos:add_proveedor' %}">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="proveedor_name">Nombre del Proveedor *</label>
+                        <input type="text" id="proveedor_name" name="name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="proveedor_id_unico">ID Único *</label>
+                        <input type="text" id="proveedor_id_unico" name="id_unico" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="proveedor_logo">Logo del Proveedor</label>
+                        <input type="file" id="proveedor_logo" name="logo" class="form-control" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="proveedor_catalogo">Catálogo (PDF)</label>
+                        <input type="file" id="proveedor_catalogo" name="catalogo" class="form-control" accept=".pdf">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" onclick="hideAddForm()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete confirmation modal -->
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🗑️ Confirmar Eliminación</h3>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar el proveedor <strong id="deleteItemName"></strong>?</p>
+                <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideDeleteModal()" class="btn btn-secondary">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">🗑️ Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showAddForm() {
+    document.getElementById('addModal').style.display = 'block';
+}
+
+function hideAddForm() {
+    document.getElementById('addModal').style.display = 'none';
+}
+
+function deleteItem(itemId, itemName, itemType) {
+    document.getElementById('deleteItemName').textContent = itemName;
+    document.getElementById('deleteForm').action = '/productos/admin/proveedores/delete/' + itemId + '/';
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const addModal = document.getElementById('addModal');
+    const deleteModal = document.getElementById('deleteModal');
+    if (event.target == addModal) {
+        addModal.style.display = 'none';
+    }
+    if (event.target == deleteModal) {
+        deleteModal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}
