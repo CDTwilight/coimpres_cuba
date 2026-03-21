@@ -1,0 +1,1001 @@
+{% extends "coimpres_cuba/base.html" %}
+{% load static %}
+
+{% block title %}{{ object.name }} | COIMPRE S.r.l. - Productos Made in Italy{% endblock %}
+
+{% block description %}{{ object.short_description|default:object.name }} - Producto italiano de alta calidad disponible en Cuba. {{ object.proveedor.name|default:"" }}{% endblock %}
+
+{% block keywords %}{{ object.name }}, {{ object.category.name|default:"" }}, productos italianos, made in Italy, {{ object.proveedor.name|default:"" }}, COIMPRE, Cuba{% endblock %}
+
+{% block og_title %}{{ object.name }} - Producto Made in Italy{% endblock %}
+{% block og_description %}{{ object.short_description|default:object.name }} - Disponible en Cuba a través de COIMPRE S.r.l.{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_image %}{% if object.image %}{{ request.scheme }}://{{ request.get_host }}{{ object.image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo_3.png' %}{% endif %}{% endblock %}
+
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'productos:product_detail' object.slug %}{% endblock %}
+
+{% block extra_structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ object.name }}",
+    "image": [
+        {% if object.image %}"{{ request.scheme }}://{{ request.get_host }}{{ object.image.url }}"{% endif %}
+        {% for image in gallery_images %}{% if forloop.first and object.image %},{% endif %}"{{ request.scheme }}://{{ request.get_host }}{{ image.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}
+    ],
+    "description": "{{ object.short_description|default:object.name }}",
+    "sku": "{{ object.sku|default:'' }}",
+    "brand": {
+        "@type": "Brand",
+        "name": "{{ object.proveedor.name|default:'Made in Italy' }}"
+    },
+    "manufacturer": {
+        "@type": "Organization",
+        "name": "{{ object.proveedor.name|default:'Italia' }}"
+    },
+    {% if object.price %}
+    "offers": {
+        "@type": "Offer",
+        "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'productos:product_detail' object.slug %}",
+        "priceCurrency": "USD",
+        "price": "{{ object.price }}",
+        "availability": "{% if object.status_procedencia.name == 'En stock' %}https://schema.org/InStock{% elif object.status_procedencia.name == 'Por pedido' %}https://schema.org/PreOrder{% else %}https://schema.org/OutOfStock{% endif %}",
+        "seller": {
+            "@type": "Organization",
+            "name": "COIMPRE S.r.l."
+        }
+    },
+    {% endif %}
+    "category": "{{ object.category.name|default:'' }}",
+    {% if object.peso %}
+    "weight": {
+        "@type": "QuantitativeValue",
+        "value": "{{ object.peso }}",
+        "unitCode": "KGM"
+    },
+    {% endif %}
+    "countryOfOrigin": {
+        "@type": "Country",
+        "name": "{{ object.origen|default:'Italia' }}"
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'productos:product_list' %}">Productos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ object.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Información del Producto -->
+        <div class="col-lg-5 col-md-6 mb-4 order-2 order-md-1">
+            <!-- Título principal del producto -->
+            <div class="product-title-section mb-4">
+                <h1 class="product-main-title">{{ object.name }}</h1>
+                {% if object.short_description %}
+                    <p class="product-subtitle text-muted">{{ object.short_description }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Información organizada en tarjetas -->
+            <div class="product-info-cards">
+                {% if object.proveedor %}
+                <div class="info-line mb-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="info-label">Proveedor:</span>
+                            <span class="info-value">{{ object.proveedor.name }}</span>
+                        </div>
+                        {% if object.proveedor.logo %}
+                            <img src="{{ object.proveedor.logo.url }}" alt="{{ object.proveedor.name }}" class="provider-logo">
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if object.price %}
+                <div class="info-line mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="info-label">Precio:</span>
+                        <div class="price-display-inline">${{ object.price }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="info-line mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="info-label">Categoría:</span>
+                        <span class="category-badge">{{ object.category }}</span>
+                    </div>
+                </div>
+                {% if object.subcategory %}
+                <div class="info-line mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="info-label">Subcategoría:</span>
+                        <span class="badge bg-secondary">{{ object.subcategory.name }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if object.status_procedencia %}
+                <div class="info-line mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="info-label">Disponibilidad:</span>
+                        <span class="badge {% if object.status_procedencia.name == 'En stock' %}bg-success{% elif object.status_procedencia.name == 'Por pedido' %}bg-warning text-dark{% else %}bg-info{% endif %}">
+                            {{ object.status_procedencia.name }}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Galería Profesional de Medios -->
+        <div class="col-lg-7 col-md-6 mb-4 order-1 order-md-2">
+            <div class="product-gallery">
+                <!-- Imagen Principal Grande -->
+                <div class="main-media-container mb-3">
+                    <img id="mainMedia" src="{% if main_image %}{{ main_image.url }}{% elif object.image %}{{ object.image.url }}{% else %}{% static 'img/no-image.jpg' %}{% endif %}" 
+                         class="shadow-lg" 
+                         alt="{{ object.name }}" 
+                         loading="lazy">
+                    
+                    <!-- Overlay para identificar videos -->
+                    <div id="videoOverlay" class="video-play-overlay d-none">
+                        <i class="bi bi-play-circle-fill text-white" style="font-size: 4rem; opacity: 0.8;"></i>
+                    </div>
+                </div>
+                
+                <!-- Galería de Thumbnails (Imágenes + Videos) -->
+                <div class="media-thumbnails-container">
+                    <div class="thumbnails-scroll-wrapper">
+                        <button class="thumbnail-nav-btn prev-btn" id="thumbPrev" aria-label="Anterior">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        
+                        <div class="thumbnails-track" id="thumbnailsTrack">
+                            <!-- Imagen Principal del Producto (siempre primera) -->
+                            {% if object.image %}
+                            <div class="thumbnail-item active" data-type="image" data-src="{{ object.image.url }}" data-alt="{{ object.name }}">
+                                <img src="{{ object.image.url }}" alt="{{ object.name }}" class="thumbnail-img" loading="lazy">
+                                <div class="thumbnail-overlay">
+                                    <span class="thumbnail-label">Principal</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Imágenes de la Galería -->
+                            {% for image in gallery_images %}
+                                {% if not image.is_main or not object.image %}
+                                <div class="thumbnail-item" data-type="image" data-src="{{ image.image.url }}" data-alt="{{ image.alt_text|default:object.name }}">
+                                    <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:object.name }}" class="thumbnail-img" loading="lazy">
+                                    {% if image.is_main and not object.image %}
+                                    <div class="thumbnail-overlay">
+                                        <span class="thumbnail-label">Principal</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Videos de la Galería -->
+                            {% for video in gallery_videos %}
+                            <div class="thumbnail-item" data-type="video" data-src="{{ video.video.url }}" data-alt="{{ video.title|default:'Video del producto' }}">
+                                <video class="thumbnail-img" muted preload="metadata">
+                                    <source src="{{ video.video.url }}" type="video/mp4">
+                                    Tu navegador no soporta el elemento video.
+                                </video>
+                                <div class="thumbnail-overlay">
+                                    <i class="bi bi-play-circle-fill text-white"></i>
+                                    {% if video.title %}
+                                    <span class="thumbnail-label">{{ video.title|truncatechars:15 }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <!-- Video Principal (si existe y no hay videos en galería) -->
+                            {% if object.video and not gallery_videos.exists %}
+                            <div class="thumbnail-item" data-type="video" data-src="{{ object.video.url }}" data-alt="Video del producto">
+                                <video class="thumbnail-img" muted preload="metadata">
+                                    <source src="{{ object.video.url }}" type="video/mp4">
+                                    Tu navegador no soporta el elemento video.
+                                </video>
+                                <div class="thumbnail-overlay">
+                                    <i class="bi bi-play-circle-fill text-white"></i>
+                                    <span class="thumbnail-label">Video</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <button class="thumbnail-nav-btn next-btn" id="thumbNext" aria-label="Siguiente">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Indicador de posición -->
+                    <div class="thumbnails-indicator mt-2">
+                        <span id="mediaCounter">1 / <span id="totalMedia">1</span></span>
+                    </div>
+                </div>
+                
+                <!-- Modal para vista completa -->
+                <div class="modal fade" id="mediaModal" tabindex="-1" aria-labelledby="mediaModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content bg-dark border-0">
+                            <div class="modal-header border-0 position-absolute" style="z-index: 1050; top: 15px; right: 15px;">
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body p-0 position-relative">
+                                <!-- Contenedor principal del modal -->
+                                <div class="modal-media-container">
+                                    <!-- Media principal del modal -->
+                                    <div class="modal-main-media" id="modalMainMedia">
+                                        <!-- El contenido se insertará dinámicamente -->
+                                    </div>
+                                    
+                                    <!-- Controles de navegación del modal -->
+                                    <button class="modal-nav-btn modal-prev" id="modalPrev" aria-label="Anterior">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                    <button class="modal-nav-btn modal-next" id="modalNext" aria-label="Siguiente">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                    
+                                    <!-- Información del media -->
+                                    <div class="modal-media-info">
+                                        <div class="modal-counter">
+                                            <span id="modalCounter">1</span> / <span id="modalTotal">1</span>
+                                        </div>
+                                        <div class="modal-title" id="modalTitle">{{ object.name }}</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Thumbnails del modal -->
+                                <div class="modal-thumbnails-section">
+                                    <div class="modal-thumbnails-track" id="modalThumbnailsTrack">
+                                        <!-- Los thumbnails se insertarán dinámicamente -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Descripción</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab" aria-controls="specs" aria-selected="false">Especificaciones</button>
+                </li>
+            </ul>
+            <div class="tab-content p-4 border border-top-0 rounded-bottom" id="productTabsContent">
+                <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    {% if object.description %}
+                        {{ object.description|linebreaks }}
+                    {% else %}
+                        <p>No hay descripción detallada disponible para este producto.</p>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                {% if object.origen %}
+                                <tr>
+                                    <th scope="row">País de origen</th>
+                                    <td>{{ object.origen }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if object.peso %}
+                                <tr>
+                                    <th scope="row">Peso</th>
+                                    <td>{{ object.peso }} kg</td>
+                                </tr>
+                                {% endif %}
+                                {% if object.status_procedencia %}
+                                <tr>
+                                    <th scope="row">Status de procedencia</th>
+                                    <td>{{ object.status_procedencia }}</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if object.ficha_tecnica %}
+                    <div class="mt-3">
+                        <a href="{{ object.ficha_tecnica.url }}" class="btn btn-outline-primary" target="_blank">
+                            <i class="bi bi-file-earmark-pdf"></i> Descargar ficha técnica
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sección de contacto WhatsApp después del contenido principal -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="contact-section bg-light rounded p-4">
+                <div class="text-center mb-4">
+                    <h3 class="section-heading justify-content-center">
+                        <span class="heading-text">Contactar por WhatsApp</span>
+                    </h3>
+                    <p class="text-muted">¿Tienes preguntas sobre este producto? Contáctanos directamente</p>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div id="whatsappButtons" class="d-flex flex-column gap-2">
+                            <!-- Los botones se generarán dinámicamente con JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Productos relacionados en carrusel -->
+    {% if related_products %}
+    <div class="related-products-section mt-5">
+        <div class="section-header mb-4">
+            <h2 class="section-main-heading">
+                <span class="heading-text">Productos Relacionados</span>
+            </h2>
+            <p class="section-description text-muted">Otros productos que podrían interesarte de la misma categoría</p>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-none d-md-flex gap-2">
+                <button class="btn btn-outline-secondary btn-sm related-prev" aria-label="Anterior">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm related-next" aria-label="Siguiente">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        <div class="related-carousel-wrapper position-relative">
+            <div class="related-carousel-track" data-items="{{ related_products|length }}">
+                {% for related_product in related_products %}
+                <div class="related-item">
+                    <div class="related-card h-100">
+                        <div class="related-image-wrapper">
+                            {% if related_product.image %}
+                                <img src="{{ related_product.image.url }}" alt="{{ related_product.name }}" loading="lazy">
+                            {% else %}
+                                <img src="{% static 'img/no-image.jpg' %}" alt="Sin imagen" loading="lazy">
+                            {% endif %}
+                            <div class="related-overlay">
+                                <a href="{% url 'productos:product_detail' related_product.slug %}" class="btn btn-sm btn-light fw-semibold shadow-sm">Ver detalle</a>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h6 class="mb-1 text-truncate" title="{{ related_product.name }}">{{ related_product.name }}</h6>
+                            <p class="small text-muted mb-2 text-truncate" title="{{ related_product.short_description }}">{{ related_product.short_description|default:""|truncatechars:70 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if related_product.price %}
+                                <span class="price-tag">${{ related_product.price }}</span>
+                                {% else %}
+                                <span class="small text-muted">Consultar</span>
+                                {% endif %}
+                                <a href="{% url 'productos:product_detail' related_product.slug %}" class="stretched-link d-inline-block ms-2 text-accent small">→</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Controles móviles -->
+            <button class="btn btn-outline-secondary btn-sm related-prev mobile-control" aria-label="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm related-next mobile-control" aria-label="Siguiente">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+            <div class="fade-edge left"></div>
+            <div class="fade-edge right"></div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/product-gallery.css' %}">
+<link rel="stylesheet" href="{% static 'css/related-carousel.css' %}">
+<style>
+    /* Imagen principal con tamaño fijo y calidad optimizada */
+    #mainMedia {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        object-position: center !important;
+        cursor: default !important;
+        image-rendering: -webkit-optimize-contrast !important;
+        image-rendering: crisp-edges !important;
+        image-rendering: pixelated !important;
+        image-rendering: optimizeQuality !important;
+    }
+    
+    /* Contenedor de imagen con tamaño fijo y aspecto ratio */
+    .main-media-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 60%; /* Aspect ratio más pequeño en PC */
+        background-color: #f8f9fa;
+        cursor: default !important;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .main-media-container img,
+    .main-media-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .main-media-container video {
+        background-color: #000;
+    }
+    
+    /* Estilos para botones WhatsApp separados */
+    .btn-whatsapp {
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        border: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        padding: 12px 20px;
+        margin-bottom: 8px;
+    }
+    
+    .btn-whatsapp:hover {
+        background: linear-gradient(135deg, #22BE5B 0%, #0F7A6B 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+    }
+    
+    .btn-whatsapp:active {
+        transform: translateY(0);
+    }
+    
+    .btn-whatsapp::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-whatsapp:hover::before {
+        left: 100%;
+    }
+    
+    .btn-whatsapp small {
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        opacity: 0.9;
+    }
+    
+    /* Botón único de WhatsApp */
+    .btn-whatsapp.primary {
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        border: 2px solid #25D366;
+        position: relative;
+    }
+    
+    /* Animación de pulso sutil */
+    @keyframes whatsappPulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+        }
+    }
+    
+    .btn-whatsapp:focus {
+        animation: whatsappPulse 1.5s infinite;
+    }
+    
+    /* ============ JERARQUÍA DE TÍTULOS ELEGANTE ============ */
+    
+    /* Título principal del producto */
+    .product-title-section {
+        border-bottom: 2px solid var(--color-accent, #9fa322);
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .product-main-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--color-primary, #2C2A28);
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+        font-family: 'Lato', sans-serif;
+    }
+    
+    .product-subtitle {
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: #6c757d;
+        line-height: 1.4;
+        margin-bottom: 0;
+    }
+    
+    /* Líneas de información simples */
+    .product-info-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .info-line {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+    }
+    
+    .info-line:hover {
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: var(--color-primary, #2C2A28);
+        min-width: 90px;
+    }
+    
+    .info-value {
+        font-weight: 500;
+        color: #495057;
+    }
+    
+
+    
+    .price-display-inline {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-accent, #9fa322);
+        font-family: 'Lato', sans-serif;
+    }
+    
+    .provider-logo {
+        max-height: 40px;
+        max-width: 80px;
+        object-fit: contain;
+    }
+    
+    /* Clasificación compacta */
+    .classification-compact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .classification-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.25rem 0;
+    }
+    
+    @media (min-width: 992px) {
+        .classification-row {
+            justify-content: flex-start;
+            gap: 1rem;
+        }
+    }
+    
+    .info-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--color-primary, #2C2A28);
+        margin-bottom: 0;
+    }
+    
+    /* Precio destacado */
+    .price-display {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-accent, #9fa322);
+        font-family: 'Lato', sans-serif;
+    }
+    
+
+    
+    .classification-label {
+        font-weight: 500;
+        color: #6c757d;
+        min-width: 100px;
+        flex-shrink: 0;
+    }
+    
+    /* Headers principales de sección */
+    .section-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .section-main-heading {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--color-primary, #2C2A28);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .section-description {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+    
+    /* Responsive para móviles */
+    @media (max-width: 768px) {
+        .main-media-container {
+            padding-bottom: 85%; /* Aspect ratio más cuadrado en móvil */
+        }
+        
+        .product-main-title {
+            font-size: 1.75rem;
+        }
+        
+        .product-subtitle {
+            font-size: 1rem;
+        }
+        
+        .section-heading {
+            font-size: 1.1rem;
+        }
+        
+        .section-main-heading {
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .price-display {
+            font-size: 1.75rem;
+        }
+        
+
+        
+        .classification-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+        
+        .provider-logo {
+            max-height: 35px;
+            max-width: 70px;
+        }
+        
+        .classification-label {
+            min-width: auto;
+            font-size: 0.9rem;
+        }
+        
+        .btn-whatsapp {
+            font-size: 14px;
+            padding: 15px 20px;
+        }
+        
+
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/simple-gallery.js' %}"></script>
+<script src="{% static 'js/product-gallery.js' %}"></script>
+<script src="{% static 'js/related-carousel.js' %}"></script>
+
+<script>
+// Sistema de rotación de contactos WhatsApp
+class WhatsAppRotationSystem {
+    constructor() {
+        this.originalContacts = [
+            {
+                number: '+5355513196',
+                name: 'Ventas Cuba ',
+                department: 'Ventas y Cotizaciones',
+                
+                specialty: 'Pedidos y precios'
+            },
+            {
+                number: '+5358270033', 
+                name: 'Ventas Cuba ',
+                department: 'Ventas y Cotizaciones',
+                
+                specialty: 'Pedidos y precios'
+            }
+        ];
+        
+        // Inicializar con copia del orden original
+        this.contacts = [...this.originalContacts];
+        
+        this.productName = `{{ object.name|escapejs }}`;
+        this.rotationKey = 'whatsapp_rotation_timestamp';
+        this.rotationOrderKey = 'whatsapp_rotation_order';
+        this.rotationInterval = 1 * 60 * 1000; // 1 minuto en milisegundos
+        
+        this.initializeRotation();
+        this.renderButtons();
+        this.startAutoRotation();
+    }
+    
+    // Inicializar sistema de rotación
+    initializeRotation() {
+        const now = Date.now();
+        const lastRotation = localStorage.getItem(this.rotationKey);
+        const savedOrder = localStorage.getItem(this.rotationOrderKey);
+        
+        // Restaurar orden guardado si existe
+        if (savedOrder) {
+            try {
+                const orderData = JSON.parse(savedOrder);
+                // Verificar que el orden guardado sea válido
+                if (orderData.length === this.originalContacts.length) {
+                    this.contacts = orderData;
+                }
+            } catch (e) {
+                this.contacts = [...this.originalContacts];
+            }
+        }
+        
+        // Verificar si necesita rotación automática
+        if (!lastRotation || (now - parseInt(lastRotation)) > this.rotationInterval) {
+            this.rotateContacts();
+            localStorage.setItem(this.rotationKey, now.toString());
+        } else {
+            const timeLeft = Math.ceil((this.rotationInterval - (now - parseInt(lastRotation))) / 1000);
+        }
+    }
+    
+    // Rotar el orden de los contactos
+    rotateContacts() {
+        const beforeOrder = this.contacts.map(c => c.name).join(' → ');
+        
+        // Rotar sistemáticamente (alternar orden)
+        this.contacts.reverse();
+        
+        const afterOrder = this.contacts.map(c => c.name).join(' → ');
+        
+        
+        
+        // Guardar el nuevo orden en localStorage
+        localStorage.setItem(this.rotationOrderKey, JSON.stringify(this.contacts));
+        
+        // Actualizar botones inmediatamente
+        this.renderButtons();
+        
+        // Mostrar notificación visual
+    }
+    
+    // Iniciar rotación automática
+    startAutoRotation() {
+        // Limpiar cualquier timer existente
+        if (this.autoRotationTimer) {
+            clearInterval(this.autoRotationTimer);
+        }
+        
+        // Configurar timer para rotación automática
+        this.autoRotationTimer = setInterval(() => {
+            const now = Date.now();
+            const lastRotation = localStorage.getItem(this.rotationKey);
+            
+            if (!lastRotation || (now - parseInt(lastRotation)) > this.rotationInterval) {
+                this.rotateContacts();
+                localStorage.setItem(this.rotationKey, now.toString());
+            }
+        }, 10000); // Verificar cada 10 segundos
+        
+    }
+    
+    // Generar mensaje personalizado para WhatsApp
+    generateMessage(contact) {
+        return encodeURIComponent(
+            `Hola ${contact.name}! 👋\n\n` +
+            `Estoy interesado en el producto:\n📦 ${this.productName}\n\n` +
+            `¿Podrían proporcionarme más información?\n\n` +
+            `Gracias! 😊`
+        );
+    }
+    
+    // Abrir WhatsApp con efectos visuales
+    openWhatsApp(contact, isPrimary = false) {
+        const message = this.generateMessage(contact);
+        const url = `https://wa.me/${contact.number}?text=${message}`;
+        
+        // Mostrar notificación
+        this.showNotification(
+            `Conectando con ${contact.name}...`, 
+            'info'
+        );
+        
+        // Abrir WhatsApp
+        const whatsappWindow = window.open(url, '_blank');
+        
+        // Verificar si se abrió correctamente
+        if (!whatsappWindow) {
+            this.showNotification(
+                '⚠️ Por favor, permite ventanas emergentes para contactar por WhatsApp', 
+                'warning'
+            );
+        } else {
+            // Registrar interacción para analytics (opcional)
+            this.trackInteraction(contact, isPrimary);
+        }
+    }
+    
+    // Registrar interacción (para futuras estadísticas)
+    trackInteraction(contact, isPrimary) {
+        const interactions = JSON.parse(localStorage.getItem('whatsapp_interactions') || '[]');
+        interactions.push({
+            contact: contact.name,
+            number: contact.number,
+            isPrimary: isPrimary,
+            timestamp: Date.now(),
+            product: this.productName
+        });
+        
+        // Mantener solo los últimos 100 registros
+        if (interactions.length > 100) {
+            interactions.splice(0, interactions.length - 100);
+        }
+        
+        localStorage.setItem('whatsapp_interactions', JSON.stringify(interactions));
+    }
+    
+    // Renderizar un solo botón con rotación de contactos
+    renderButtons() {
+        const container = document.getElementById('whatsappButtons');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        // Solo mostrar el primer contacto (que rota automáticamente)
+        const contact = this.contacts[0];
+        const button = document.createElement('button');
+        button.className = 'btn btn-whatsapp primary';
+        button.onclick = () => this.openWhatsApp(contact, true);
+        
+        button.innerHTML = `
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-whatsapp me-2"></i>
+                    <div class="text-start">
+                        <div class="fw-bold">Contactar por WhatsApp</div>
+                        <small class="d-block opacity-90">Ventas y Cotizaciones</small>
+                    </div>
+                </div>
+                <div class="text-end d-none d-md-block">
+                    <small class="opacity-75">Pedidos y precios</small>
+                    <div class="small opacity-60 d-none">${contact.number}</div>
+                </div>
+            </div>
+        `;
+        
+        // Agregar efectos hover
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 20px rgba(37, 211, 102, 0.3)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+        
+        container.appendChild(button);
+    }
+    
+    // Mostrar notificaciones visuales
+    showNotification(message, type = 'info') {
+        // Remover notificaciones existentes
+        const existingNotifications = document.querySelectorAll('.whatsapp-notification');
+        existingNotifications.forEach(notif => notif.remove());
+        
+        // Crear nueva notificación
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'info' ? 'primary' : type === 'warning' ? 'warning' : 'success'} alert-dismissible fade show position-fixed whatsapp-notification`;
+        notification.style.cssText = `
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 8px;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        
+        notification.innerHTML = `
+            <strong>${message}</strong>
+            <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+        `;
+        
+        // Agregar al body
+        document.body.appendChild(notification);
+        
+        // Auto-remover después de 4 segundos
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 4000);
+    }
+}
+
+// Inicializar sistema cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    const whatsappSystem = new WhatsAppRotationSystem();
+    
+    // Agregar estilos de animación
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}
