@@ -1,0 +1,413 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}Proveedores - Coimpre SRL{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-gallery.css' %}">
+<style>
+    /* UNIVERSAL BOX SIZING AND OVERFLOW CONTROL */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+    
+    html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+    
+    .container {
+        max-width: 100%;
+        overflow-x: hidden;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100%;
+    }
+    
+    [class*="col-"] {
+        padding-left: 12px;
+        padding-right: 12px;
+        max-width: 100%;
+    }
+    .proveedor-card {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .proveedor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .proveedor-logo {
+        height: 120px;
+        object-fit: contain;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    .proveedor-info {
+        padding: 1.5rem;
+    }
+    
+    .proveedor-name {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--color-primary, #2C2A28);
+        margin-bottom: 0.5rem;
+    }
+    
+    .productos-count {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .catalog-btn {
+        background: linear-gradient(135deg, var(--color-accent, #9fa322), #b8b538);
+        color: var(--color-white, #FFFFFF);
+        font-weight: bold;
+        border: none;
+        border-radius: 25px;
+        padding: 8px 20px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .catalog-btn:hover {
+        background: linear-gradient(135deg, #8a901f, var(--color-accent, #9fa322));
+        color: var(--color-white, #FFFFFF);
+        transform: scale(1.05);
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, var(--color-primary, #2C2A28), #3a3835);
+        color: var(--color-white, #FFFFFF);
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--color-accent, #9fa322);
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .italian-accent {
+        border-left: 4px solid var(--color-accent, #9fa322);
+        padding-left: 1rem;
+    }
+    
+    /* PREVENT HORIZONTAL SCROLL */
+    body {
+        overflow-x: hidden;
+    }
+    
+    .container {
+        max-width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .col-xl-4, .col-lg-6, .col-md-6, .col-sm-6, .col-12,
+    .col-lg-8, .col-lg-4 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* RESPONSIVE DESIGN IMPROVEMENTS */
+    @media (max-width: 991.98px) {
+        .hero-section {
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .proveedor-logo {
+            height: 100px;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .container {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        
+        [class*="col-"] {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+        }
+        
+        .hero-section {
+            padding: 2rem 0;
+        }
+        
+        .hero-title {
+            font-size: 1.75rem;
+            word-wrap: break-word;
+        }
+        
+        .hero-subtitle {
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+        
+        .proveedor-info {
+            padding: 1rem;
+        }
+        
+        .proveedor-logo {
+            height: 90px;
+        }
+        
+        .catalog-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+        
+        .proveedor-name {
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+    }
+    
+    @media (max-width: 575.98px) {
+        .hero-section {
+            padding: 1.5rem 0;
+        }
+        
+        .hero-title {
+            font-size: 1.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        .proveedor-info {
+            padding: 1rem;
+        }
+        
+        .proveedor-logo {
+            height: 80px;
+        }
+        
+        .proveedor-name {
+            font-size: 1.1rem;
+        }
+        
+        .productos-count {
+            font-size: 0.85rem;
+        }
+    }
+    
+    /* EXTRA SMALL SCREENS - Prevent any overflow */
+    @media (max-width: 375px) {
+        .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .col-xl-4, .col-lg-6, .col-md-6, .col-sm-6, .col-12 {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        
+        .proveedor-info {
+            padding: 0.75rem;
+        }
+        
+        .hero-title {
+            font-size: 1.25rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="italian-accent">
+                    <h1 class="hero-title animate__animated animate__fadeInUp" style="color: white !important;">
+                        {{ i18n.our_suppliers|default:"Nuestros Proveedores" }}
+                    </h1>
+                    <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+                        {{ i18n.suppliers_subtitle|default:"Productos de alta calidad directamente desde Italia. Conoce a nuestros socios comerciales y explora sus catálogos especializados." }}
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="animate__animated animate__fadeInRight animate__delay-2s">
+                    <!-- Decoration removed for professional appearance -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Proveedores Grid -->
+<section class="py-5">
+    <div class="container">
+        {% if proveedores_con_productos %}
+            <div class="row">
+                {% for item in proveedores_con_productos %}
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12 mb-4 animate__animated animate__fadeInUp">
+                        <div class="card proveedor-card h-100">
+                            <div class="card-body proveedor-info d-flex flex-column">
+                                <!-- Logo del Proveedor -->
+                                <div class="text-center mb-3">
+                                    {% if item.proveedor.logo %}
+                                        <img src="{{ item.proveedor.logo.url }}" 
+                                             alt="Logo {{ item.proveedor.name }}" 
+                                             class="proveedor-logo w-100">
+                                    {% else %}
+                                        <div class="proveedor-logo w-100 d-flex align-items-center justify-content-center bg-light">
+                                            <span style="font-size: 1rem; color: #6c757d;">Sin logo</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Información del Proveedor -->
+                                <div class="flex-grow-1">
+                                    <h3 class="proveedor-name">{{ item.proveedor.name }}</h3>
+                                    
+                                    <div class="productos-count">
+                                        {{ item.productos_count }} {% if item.productos_count == 1 %}{{ i18n.products_count|default:"producto" }}{% else %}{{ i18n.products_count_plural|default:"productos" }}{% endif %}
+                                    </div>
+                                    
+                                    
+                                </div>
+                                
+                                <!-- Acciones -->
+                                <div class="mt-auto">
+                                    <div class="d-flex flex-column gap-2">
+                                        <!-- Botón Ver Productos -->
+                                        <a href="{% url 'productos:proveedor_detail' item.proveedor.slug %}" 
+                                           class="btn btn-outline-primary btn-sm w-100">
+                                            {{ i18n.view_products|default:"Ver Productos" }}
+                                        </a>
+                                        
+                                        <!-- Botón Catálogo PDF -->
+                                        {% if item.proveedor.catalogo %}
+                                            <a href="{{ item.proveedor.catalogo.url }}" 
+                                               target="_blank" 
+                                               class="catalog-btn btn-sm w-100">
+                                                {{ i18n.download_catalog|default:"Descargar Catálogo" }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted small text-center d-block">
+                                                {{ i18n.catalog_not_available|default:"Catálogo no disponible" }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Estado Vacío -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <!-- No icon needed -->
+                </div>
+                <h3 class="text-muted mb-3">{{ i18n.no_suppliers|default:"No hay proveedores disponibles" }}</h3>
+                <p class="text-muted">
+                    {{ i18n.no_suppliers_message|default:"Actualmente no tenemos proveedores con productos activos en nuestro catálogo.<br>Vuelve pronto para ver nuestras nuevas incorporaciones." }}
+                </p>
+                <a href="{% url 'productos:product_list' %}" class="btn btn-primary mt-3">
+                    {{ i18n.all_products|default:"Ver Todos los Productos" }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Información Adicional -->
+<section class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h3 class="mb-4">
+                    {{ i18n.guaranteed_quality|default:"Calidad Garantizada" }}
+                </h3>
+                <p class="text-muted">
+                    {{ i18n.quality_message|default:"Todos nuestros proveedores son cuidadosamente seleccionados para asegurar la más alta calidad en productos italianos. Cada catálogo contiene información detallada sobre especificaciones técnicas, certificaciones y garantías de calidad." }}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar efecto hover suave a las tarjetas
+    const cards = document.querySelectorAll('.proveedor-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}
