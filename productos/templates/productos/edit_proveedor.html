@@ -1,0 +1,214 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}Editar Proveedor{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<style>
+/* CSS crítico inline para móvil - Variables exactas de admin.css */
+:root {
+    --color-primary: #2C2A28 !important;
+    --color-accent: #9fa322 !important;
+    --color-background: #F9F6F1 !important;
+    --color-white: #FFFFFF !important;
+    --color-light-gray: #f8f9fa !important;
+    --color-border: #e1e5e9 !important;
+    --color-text-muted: #6c757d !important;
+    --color-success: #28a745 !important;
+    --color-danger: #dc3545 !important;
+    --color-warning: #ffc107 !important;
+    --shadow-soft: 0 2px 10px rgba(44, 42, 40, 0.08) !important;
+    --shadow-hover: 0 5px 15px rgba(44, 42, 40, 0.12) !important;
+    --border-radius: 10px !important;
+    --border-radius-sm: 6px !important;
+    --transition: all 0.3s ease !important;
+}
+
+/* Forzar colores exactos del admin.css solo para contenido admin */
+.admin-container {
+    background-color: var(--color-background) !important;
+    color: var(--color-primary) !important;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Header específico del admin */
+.admin-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(44, 42, 40, 0.9) 100%) !important;
+    color: var(--color-white) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.admin-header h1 {
+    color: var(--color-white) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-header p {
+    color: var(--color-white) !important;
+    opacity: 0.9 !important;
+}
+
+/* Cards y secciones */
+.admin-section {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.card,
+.table-responsive,
+.admin-filters,
+.modal-content,
+.edit-form-container {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+/* Admin nav específico */
+.admin-nav {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.admin-nav .nav-link {
+    color: var(--color-primary) !important;
+}
+
+.admin-nav .nav-link.active {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+/* Dark mode override solo para contenido admin */
+@media (prefers-color-scheme: dark) {
+    .admin-container,
+    .admin-section,
+    .card,
+    .modal-content,
+    .table-responsive,
+    .admin-filters,
+    .edit-form-container {
+        background-color: var(--color-white) !important;
+        color: var(--color-primary) !important;
+    }
+    
+    .admin-nav {
+        background-color: var(--color-white) !important;
+    }
+}
+
+/* Estilos para inputs con valores precargados */
+.form-control {
+    transition: var(--transition) !important;
+}
+
+.form-control:not(:placeholder-shown) {
+    background-color: #e8f4f8 !important;
+    border-color: var(--color-accent) !important;
+    color: var(--color-primary) !important;
+    font-weight: 500 !important;
+}
+
+.form-control:focus {
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 0 0 0.2rem rgba(159, 163, 34, 0.25) !important;
+}
+
+.current-logo {
+    max-width: 200px;
+    max-height: 100px;
+    margin: 10px 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+}
+
+.current-file {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #e8f4f8;
+    border-radius: var(--border-radius-sm);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Editar Proveedor</h1>
+        <p>Modifica la información del proveedor</p>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <div class="admin-nav">
+        <a href="{% url 'productos:admin_panel' %}" class="nav-link">Productos</a>
+        <a href="{% url 'productos:manage_proveedores' %}" class="nav-link active">Proveedores</a>
+        <a href="{% url 'productos:manage_categories' %}" class="nav-link">Categorías</a>
+        <a href="{% url 'productos:manage_subcategories' %}" class="nav-link">Subcategorías</a>
+        <a href="{% url 'productos:manage_estatus' %}" class="nav-link">Estatus</a>
+    </div>
+    
+    <!-- Mensajes de éxito/error -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>Información del Proveedor</h2>
+            <a href="{% url 'productos:manage_proveedores' %}" class="btn btn-secondary">Volver</a>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="proveedor_name">Nombre del Proveedor *</label>
+                    <input type="text" id="proveedor_name" name="name" class="form-control" value="{{ proveedor.name|default:'' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="proveedor_id_unico">ID Único *</label>
+                    <input type="text" id="proveedor_id_unico" name="id_unico" class="form-control" value="{{ proveedor.id_unico|default:'' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="proveedor_logo">Logo del Proveedor</label>
+                    {% if proveedor.logo %}
+                        <div class="current-file">
+                            <img src="{{ proveedor.logo.url }}" alt="{{ proveedor.name }}" class="current-logo">
+                            <p><small>Logo actual</small></p>
+                        </div>
+                    {% endif %}
+                    <input type="file" id="proveedor_logo" name="logo" class="form-control" accept="image/*">
+                    <small class="form-text text-muted">Dejar vacío para mantener el logo actual</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="proveedor_catalogo">Catálogo (PDF)</label>
+                    {% if proveedor.catalogo %}
+                        <div class="current-file">
+                            <a href="{{ proveedor.catalogo.url }}" target="_blank" class="btn btn-sm btn-outline-primary">📄 Ver catálogo actual</a>
+                        </div>
+                    {% endif %}
+                    <input type="file" id="proveedor_catalogo" name="catalogo" class="form-control" accept=".pdf">
+                    <small class="form-text text-muted">Dejar vacío para mantener el catálogo actual</small>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'productos:manage_proveedores' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
