@@ -1,0 +1,119 @@
+{% load static %}
+<div class="filter-panel mb-4">
+  <div class="filter-panel-header d-flex justify-content-between align-items-center">
+    <h6 class="m-0 text-uppercase fw-bold">{{ i18n.filters|default:"Filtros" }}</h6>
+    <button type="button"
+            class="btn btn-sm btn-toggle-filters d-lg-none"
+            data-bs-toggle="collapse"
+            data-bs-target="#filterBody"
+            aria-controls="filterBody"
+            aria-expanded="false">
+      <span>{{ i18n.show_filters|default:"Mostrar" }}</span>
+    </button>
+  </div>
+  <div id="filterBody" class="collapse d-lg-block filter-panel-body">
+    <form method="get" class="filters-form">
+
+      <!-- Búsqueda -->
+      <div class="filter-group">
+        <label class="form-label fw-semibold small text-accent">{{ i18n.search|default:"Buscar" }}</label>
+        <input type="text" name="q" value="{{ request.GET.q }}" class="form-control form-control-sm" placeholder="{{ i18n.search_products|default:'Nombre o descripción' }}">
+      </div>
+
+      <!-- Categoría -->
+      {% if categories %}
+      <div class="filter-group">
+        <label class="form-label fw-semibold small text-accent">{{ i18n.category|default:"Categoría" }}</label>
+        <select name="category" class="form-select form-select-sm" id="category-filter">
+          <option value="">{{ i18n.all_categories|default:"Todas" }}</option>
+          {% for cat in categories %}
+            <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug or selected_category_from_subcategory.slug == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+
+      <!-- Subcategoría -->
+      {% if all_subcategories %}
+      <div class="filter-group">
+        <label class="form-label fw-semibold small text-accent">{{ i18n.subcategory|default:"Subcategoría" }}</label>
+        <select name="subcategory" class="form-select form-select-sm" id="subcategory-filter">
+          <option value="">{{ i18n.all_subcategories|default:"Todas" }}</option>
+          {% for sub in all_subcategories %}
+            <option value="{{ sub.slug }}" data-category="{{ sub.category.slug }}" {% if request.GET.subcategory == sub.slug %}selected{% endif %}>{{ sub.name }}</option>
+          {% endfor %}
+        </select>
+        {% if request.GET.subcategory %}
+          {% for sub in all_subcategories %}
+            {% if sub.slug == request.GET.subcategory %}
+              <small class="form-text text-muted mt-1">
+                <i class="bi bi-folder"></i> {{ sub.category.name }}
+              </small>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% endif %}
+
+
+
+      <!-- Estado procedencia -->
+      {% if status_list %}
+      <div class="filter-group">
+        <label class="form-label fw-semibold small text-accent">{{ i18n.status|default:"Estado" }}</label>
+        <select name="status" class="form-select form-select-sm">
+          <option value="">{{ i18n.all_status|default:"Todos" }}</option>
+          {% for st in status_list %}
+            <option value="{{ st.id }}" {% if request.GET.status == st.id|stringformat:'s' %}selected{% endif %}>
+              {{ st.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary btn-sm px-3">{{ i18n.apply|default:"Aplicar" }}</button>
+        <a href="." class="btn btn-outline-secondary btn-sm">{{ i18n.clear|default:"Limpiar" }}</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const subcategorySelect = document.getElementById('subcategory-filter');
+    const categorySelect = document.getElementById('category-filter');
+    
+    if (subcategorySelect && categorySelect) {
+        // Cuando se selecciona una subcategoría, auto-seleccionar su categoría
+        subcategorySelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const categorySlug = selectedOption.getAttribute('data-category');
+            
+            if (categorySlug && this.value !== '') {
+                // Seleccionar la categoría correspondiente
+                for (let option of categorySelect.options) {
+                    if (option.value === categorySlug) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            } else {
+                // Si no hay subcategoría seleccionada, limpiar categoría
+                categorySelect.selectedIndex = 0;
+            }
+        });
+        
+        // Cuando se cambia la categoría, filtrar subcategorías disponibles
+        categorySelect.addEventListener('change', function() {
+            const selectedCategory = this.value;
+            
+            // Si se deselecciona la categoría, también deseleccionar subcategoría
+            if (selectedCategory === '') {
+                subcategorySelect.selectedIndex = 0;
+            }
+        });
+    }
+});
+</script>
