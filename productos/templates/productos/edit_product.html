@@ -1,0 +1,703 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}Editar Producto{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<style>
+/* CSS crítico inline para móvil - Variables exactas de admin.css */
+:root {
+    --color-primary: #2C2A28 !important;
+    --color-accent: #9fa322 !important;
+    --color-background: #F9F6F1 !important;
+    --color-white: #FFFFFF !important;
+    --color-light-gray: #f8f9fa !important;
+    --color-border: #e1e5e9 !important;
+    --color-text-muted: #6c757d !important;
+    --color-success: #28a745 !important;
+    --color-danger: #dc3545 !important;
+    --color-warning: #ffc107 !important;
+    --shadow-soft: 0 2px 10px rgba(44, 42, 40, 0.08) !important;
+    --shadow-hover: 0 5px 15px rgba(44, 42, 40, 0.12) !important;
+    --border-radius: 10px !important;
+    --border-radius-sm: 6px !important;
+    --transition: all 0.3s ease !important;
+}
+
+/* Forzar colores exactos del admin.css solo para contenido admin */
+.admin-container {
+    background-color: var(--color-background) !important;
+    color: var(--color-primary) !important;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Header específico del admin */
+.admin-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(44, 42, 40, 0.9) 100%) !important;
+    color: var(--color-white) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.admin-header h1 {
+    color: var(--color-white) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-header p {
+    color: var(--color-white) !important;
+    opacity: 0.9 !important;
+}
+
+/* Cards y secciones */
+.admin-section {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.card,
+.table-responsive,
+.admin-filters,
+.modal-content,
+.edit-form-container {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+/* Admin nav específico */
+.admin-nav {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.admin-nav .nav-link {
+    color: var(--color-primary) !important;
+}
+
+.admin-nav .nav-link.active {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+/* Tablas */
+.admin-table {
+    background-color: var(--color-white) !important;
+}
+
+.admin-table th,
+.admin-table td {
+    border-color: var(--color-border) !important;
+}
+
+/* Thumbnails */
+.product-thumb,
+.image-preview {
+    border-radius: var(--border-radius-sm) !important;
+}
+
+.no-image {
+    background: var(--color-light-gray) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+}
+
+/* Dark mode override solo para contenido admin */
+@media (prefers-color-scheme: dark) {
+    .admin-container,
+    .admin-section,
+    .card,
+    .modal-content,
+    .table-responsive,
+    .admin-filters,
+    .edit-form-container {
+        background-color: var(--color-white) !important;
+        color: var(--color-primary) !important;
+    }
+    
+    .admin-nav {
+        background-color: var(--color-white) !important;
+    }
+}
+
+/* Estilos para inputs con valores precargados */
+.form-control {
+    transition: var(--transition) !important;
+}
+
+.form-control:not(:placeholder-shown) {
+    background-color: #e8f4f8 !important;
+    border-color: var(--color-accent) !important;
+    color: var(--color-primary) !important;
+    font-weight: 500 !important;
+}
+
+.form-control:focus {
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 0 0 0.2rem rgba(159, 163, 34, 0.25) !important;
+}
+
+select.form-control option:checked {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+.form-text.text-muted {
+    color: var(--color-primary) !important;
+    font-weight: 500 !important;
+}
+
+.form-text.text-muted strong {
+    color: var(--color-accent) !important;
+    font-weight: 700 !important;
+}
+
+/* Mobile específico */
+@media (max-width: 768px) {
+    .product-thumb,
+    .image-preview {
+        width: 35px !important;
+        height: 35px !important;
+        object-fit: cover !important;
+        border-radius: var(--border-radius-sm) !important;
+    }
+    
+    .no-image {
+        width: 35px !important;
+        height: 35px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: var(--color-light-gray) !important;
+        border: 1px solid var(--color-border) !important;
+        border-radius: var(--border-radius-sm) !important;
+        font-size: 14px !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>✏️ Editar Producto</h1>
+        <p>Modifica los datos del producto</p>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <div class="admin-nav">
+        <a href="{% url 'productos:admin_panel' %}" class="nav-link active">📦 Productos</a>
+        <a href="{% url 'productos:manage_proveedores' %}" class="nav-link">🏭 Proveedores</a>
+        <a href="{% url 'productos:manage_categories' %}" class="nav-link">📂 Categorías</a>
+        <a href="{% url 'productos:manage_subcategories' %}" class="nav-link">📁 Subcategorías</a>
+        <a href="{% url 'productos:manage_estatus' %}" class="nav-link">🏷️ Estatus</a>
+    </div>
+    
+    <!-- Mensajes de éxito/error -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>Información del Producto</h2>
+            <a href="{% url 'productos:admin_panel' %}" class="btn btn-secondary">← Volver a la lista</a>
+        </div>
+        
+        <div class="alert alert-info" style="margin: 20px; background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460;">
+            <strong>ℹ️ Nota:</strong> Los campos con fondo azul claro contienen valores actuales. Si no modificas un campo, se mantendrá su valor original.
+        </div>
+        
+        <div class="form-container">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <div class="form-group col-md-8">
+                        <label for="name">Nombre del Producto *</label>
+                        <input type="text" id="name" name="name" value="{{ product.name|default:'' }}" class="form-control" required placeholder="Nombre del producto">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="sku">Código SKU</label>
+                        <input type="text" id="sku" name="sku" value="{{ product.sku|default:'' }}" class="form-control" 
+                               {% if not product.sku %}placeholder="Se genera automáticamente" readonly style="background-color: #f8f9fa; color: #6c757d;"{% else %}placeholder="Código SKU actual"{% endif %}>
+                        {% if product.sku %}
+                            <small class="form-text text-muted">Valor actual: <strong>{{ product.sku }}</strong></small>
+                        {% else %}
+                            <small class="form-text text-muted">
+                                <i class="bi bi-info-circle"></i> <strong>El SKU se genera automáticamente</strong> al guardar. 
+                                Deja en blanco para generar código único.
+                            </small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Descripción</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" placeholder="Descripción del producto">{{ product.description|default:'' }}</textarea>
+                    {% if product.description %}
+                        <small class="form-text text-muted">Longitud: <strong>{{ product.description|length }} caracteres</strong></small>
+                    {% endif %}
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="category">Categoría *</label>
+                        <select id="category" name="category" class="form-control" required onchange="updateSubcategories()">
+                            <option value="">Selecciona una categoría</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.pk }}" {% if cat.pk == product.category.pk %}selected{% endif %}>
+                                    {{ cat.name }}{% if cat.pk == product.category.pk %} ✓ (Actual){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if product.category %}
+                            <small class="form-text text-muted">Valor actual: <strong>{{ product.category.name }}</strong></small>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="subcategory">Subcategoría</label>
+                        <select id="subcategory" name="subcategory" class="form-control">
+                            <option value="">Selecciona una subcategoría</option>
+                            {% for subcat in subcategories %}
+                                <option value="{{ subcat.pk }}" data-category="{{ subcat.category.pk }}" 
+                                        {% if subcat.pk == product.subcategory.pk %}selected{% endif %}>
+                                    {{ subcat.name }}{% if subcat.pk == product.subcategory.pk %} ✓ (Actual){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if product.subcategory %}
+                            <small class="form-text text-muted">Valor actual: <strong>{{ product.subcategory.name }}</strong></small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="proveedor">Proveedor</label>
+                        <select id="proveedor" name="proveedor" class="form-control">
+                            <option value="">Selecciona un proveedor</option>
+                            {% for prov in proveedores %}
+                                <option value="{{ prov.pk }}" {% if prov.pk == product.proveedor.pk %}selected{% endif %}>
+                                    {{ prov.name }}{% if prov.pk == product.proveedor.pk %} ✓ (Actual){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if product.proveedor %}
+                            <small class="form-text text-muted">Valor actual: <strong>{{ product.proveedor.name }}</strong></small>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="estatus">Estatus</label>
+                        <select id="estatus" name="estatus" class="form-control">
+                            <option value="">Selecciona un estatus</option>
+                            {% for est in all_estatus %}
+                                <option value="{{ est.pk }}" {% if est.pk == product.estatus.pk %}selected{% endif %}>
+                                    {{ est.name }}{% if est.pk == product.estatus.pk %} ✓ (Actual){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if product.estatus %}
+                            <small class="form-text text-muted">Valor actual: <strong>{{ product.estatus.name }}</strong></small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="origen">Origen</label>
+                        <input type="text" id="origen" name="origen" value="{{ product.origen|default:'' }}" class="form-control" placeholder="País de origen">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="price">Precio</label>
+                        <input type="number" id="price" name="price" value="{{ product.price|default:'' }}" step="0.01" class="form-control" placeholder="Precio del producto">
+                        {% if product.price %}
+                            <small class="form-text text-muted">Valor actual: <strong>${{ product.price }}</strong></small>
+                        {% else %}
+                            <small class="form-text text-muted">Sin precio establecido</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="image">Imagen Principal del Producto</label>
+                    {% if product.image %}
+                        <div style="margin-bottom: 10px;">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 200px; max-height: 200px; border-radius: var(--border-radius-sm); border: 2px solid var(--color-accent);">
+                            <p style="margin-top: 5px; color: var(--color-accent); font-weight: 600;">📸 Imagen actual</p>
+                        </div>
+                    {% endif %}
+                    <input type="file" id="image" name="image" accept="image/*" class="form-control">
+                    <small class="form-text text-muted">Esta imagen se mostrará como portada del producto en las listas y tarjetas</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ficha_tecnica">Ficha Técnica (PDF)</label>
+                    <input type="file" id="ficha_tecnica" name="ficha_tecnica" accept=".pdf" class="form-control">
+                    {% if product.ficha_tecnica %}
+                        <small class="form-text text-muted">
+                            Archivo actual: <a href="{{ product.ficha_tecnica.url }}" target="_blank">{{ product.ficha_tecnica.name }}</a>
+                        </small>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="is_active" name="is_active" value="true" class="form-check-input" 
+                               {% if product.is_active %}checked{% endif %}>
+                        <label for="is_active" class="form-check-label">Producto Activo</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="destacado" name="destacado" value="true" class="form-check-input" 
+                               {% if product.destacado %}checked{% endif %}>
+                        <label for="destacado" class="form-check-label">Producto Destacado</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="en_oferta" name="en_oferta" value="true" class="form-check-input" 
+                               {% if product.en_oferta %}checked{% endif %}>
+                        <label for="en_oferta" class="form-check-label">En Oferta</label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'productos:admin_panel' %}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Product Images Section -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>🖼️ Imágenes del Producto ({{ product.images.count }})</h2>
+            <button class="btn btn-primary" onclick="showImageForm()">➕ Agregar Imagen</button>
+        </div>
+        
+        {% if product.images.all %}
+            <div class="alert alert-info" style="margin: 20px; background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460;">
+                <strong>💡 Tip:</strong> Puedes editar la descripción y orden de cada imagen, o eliminarlas si ya no las necesitas.
+            </div>
+        {% endif %}
+        
+        <div class="images-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px;">
+            {% for image in product.images.all %}
+                <div class="image-item" style="border: 1px solid var(--color-border); border-radius: var(--border-radius); overflow: hidden; background: white;">
+                    <div style="position: relative; width: 100%; height: 200px; overflow: hidden;">
+                        <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% if image.is_main %}
+                            <span style="position: absolute; top: 10px; right: 10px; background: var(--color-accent); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold;">
+                                ⭐ Principal
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="image-info" style="padding: 15px;">
+                        <p style="margin: 0 0 5px 0; font-weight: 600;">{{ image.alt_text|default:"Sin descripción" }}</p>
+                        <p style="margin: 0 0 10px 0; color: #6c757d; font-size: 14px;">Orden: {{ image.order }}</p>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-sm btn-warning" data-image-id="{{ image.pk }}" data-image-alt="{{ image.alt_text }}" data-image-order="{{ image.order }}" onclick="editImage(this.dataset.imageId, this.dataset.imageAlt, this.dataset.imageOrder)" style="flex: 1;">✏️ Editar</button>
+                            <button class="btn btn-sm btn-danger" data-image-id="{{ image.pk }}" onclick="deleteImage(this.dataset.imageId)" style="flex: 1;">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center text-muted" style="grid-column: 1 / -1; padding: 40px;">
+                    <p style="font-size: 18px; margin-bottom: 20px;">📷 No hay imágenes para este producto</p>
+                    <button class="btn btn-primary" onclick="showImageForm()">➕ Agregar Primera Imagen</button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Product Videos Section -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>🎥 Videos del Producto ({{ product.videos.count }})</h2>
+            <button class="btn btn-primary" onclick="showVideoForm()">➕ Agregar Video</button>
+        </div>
+        
+        {% if product.videos.all %}
+            <div class="alert alert-info" style="margin: 20px; background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460;">
+                <strong>💡 Tip:</strong> Puedes editar el título y orden de cada video, o eliminarlos si ya no los necesitas.
+            </div>
+        {% endif %}
+        
+        <div class="videos-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+            {% for video in product.videos.all %}
+                <div class="video-item" style="border: 1px solid var(--color-border); border-radius: var(--border-radius); overflow: hidden; background: white;">
+                    <video controls loading="lazy" preload="metadata" style="width: 100%; height: 200px; background: black;">
+                        <source src="{{ video.video.url }}" type="video/mp4">
+                        Tu navegador no soporta la reproducción de videos.
+                    </video>
+                    <div class="video-info" style="padding: 15px;">
+                        <p style="margin: 0 0 5px 0; font-weight: 600;">{{ video.title|default:"Sin título" }}</p>
+                        {% if video.description %}
+                            <p style="margin: 0 0 5px 0; color: #6c757d; font-size: 13px;">{{ video.description|truncatechars:50 }}</p>
+                        {% endif %}
+                        <p style="margin: 0 0 10px 0; color: #6c757d; font-size: 14px;">Orden: {{ video.order }}</p>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-sm btn-warning" data-video-id="{{ video.pk }}" data-video-title="{{ video.title }}" data-video-description="{{ video.description }}" data-video-order="{{ video.order }}" onclick="editVideo(this.dataset.videoId, this.dataset.videoTitle, this.dataset.videoDescription, this.dataset.videoOrder)" style="flex: 1;">✏️ Editar</button>
+                            <button class="btn btn-sm btn-danger" data-video-id="{{ video.pk }}" onclick="deleteVideo(this.dataset.videoId)" style="flex: 1;">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center text-muted" style="grid-column: 1 / -1; padding: 40px;">
+                    <p style="font-size: 18px; margin-bottom: 20px;">🎥 No hay videos para este producto</p>
+                    <button class="btn btn-primary" onclick="showVideoForm()">➕ Agregar Primer Video</button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Add Image Modal -->
+    <div id="imageModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Agregar Imagen</h3>
+                <button onclick="hideImageForm()" class="close-btn">✕</button>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'productos:add_product_image' product.pk %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="image_file">Imagen *</label>
+                    <input type="file" id="image_file" name="image" accept="image/*" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="image_alt">Descripción</label>
+                    <input type="text" id="image_alt" name="alt_text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="image_order">Orden</label>
+                    <input type="number" id="image_order" name="order" class="form-control" value="1" min="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="hideImageForm()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Video Modal -->
+    <div id="videoModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Agregar Video</h3>
+                <button onclick="hideVideoForm()" class="close-btn">✕</button>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'productos:add_product_video' product.pk %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="video_file">Video *</label>
+                    <input type="file" id="video_file" name="video" accept="video/*" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="video_title">Título</label>
+                    <input type="text" id="video_title" name="title" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="video_description">Descripción</label>
+                    <textarea id="video_description" name="description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="video_order">Orden</label>
+                    <input type="number" id="video_order" name="order" class="form-control" value="1" min="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="hideVideoForm()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Image Modal -->
+    <div id="editImageModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Editar Imagen</h3>
+                <button onclick="hideEditImageForm()" class="close-btn">✕</button>
+            </div>
+            <form method="post" action="" id="editImageForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="edit_image_alt">Descripción</label>
+                    <input type="text" id="edit_image_alt" name="alt_text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="edit_image_order">Orden</label>
+                    <input type="number" id="edit_image_order" name="order" class="form-control" min="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="hideEditImageForm()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Video Modal -->
+    <div id="editVideoModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Editar Video</h3>
+                <button onclick="hideEditVideoForm()" class="close-btn">✕</button>
+            </div>
+            <form method="post" action="" id="editVideoForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="edit_video_title">Título</label>
+                    <input type="text" id="edit_video_title" name="title" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="edit_video_description">Descripción</label>
+                    <textarea id="edit_video_description" name="description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit_video_order">Orden</label>
+                    <input type="number" id="edit_video_order" name="order" class="form-control" min="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="hideEditVideoForm()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Update subcategories based on selected category
+function updateSubcategories() {
+    const categorySelect = document.getElementById('category');
+    const subcategorySelect = document.getElementById('subcategory');
+    const selectedCategory = categorySelect.value;
+    
+    // Clear subcategory options except the first one
+    subcategorySelect.innerHTML = '<option value="">Selecciona una subcategoría</option>';
+    
+    if (selectedCategory) {
+        // Show only subcategories for the selected category
+        const allOptions = document.querySelectorAll('#subcategory option[data-category]');
+        allOptions.forEach(option => {
+            if (option.dataset.category === selectedCategory) {
+                subcategorySelect.appendChild(option.cloneNode(true));
+            }
+        });
+    }
+}
+
+// Modal functions
+function showImageForm() {
+    document.getElementById('imageModal').style.display = 'block';
+}
+
+function hideImageForm() {
+    document.getElementById('imageModal').style.display = 'none';
+}
+
+function showVideoForm() {
+    document.getElementById('videoModal').style.display = 'block';
+}
+
+function hideVideoForm() {
+    document.getElementById('videoModal').style.display = 'none';
+}
+
+function showEditImageForm() {
+    document.getElementById('editImageModal').style.display = 'block';
+}
+
+function hideEditImageForm() {
+    document.getElementById('editImageModal').style.display = 'none';
+}
+
+function showEditVideoForm() {
+    document.getElementById('editVideoModal').style.display = 'block';
+}
+
+function hideEditVideoForm() {
+    document.getElementById('editVideoModal').style.display = 'none';
+}
+
+function editImage(imageId, altText, order) {
+    // Set the form action to the correct URL
+    const form = document.getElementById('editImageForm');
+    form.action = '{% url "productos:edit_product_image" 0 %}'.replace('0', imageId);
+    
+    // Populate the form with current values
+    document.getElementById('edit_image_alt').value = altText || '';
+    document.getElementById('edit_image_order').value = order || 1;
+    
+    showEditImageForm();
+}
+
+function editVideo(videoId, title, description, order) {
+    // Set the form action to the correct URL
+    const form = document.getElementById('editVideoForm');
+    form.action = '{% url "productos:edit_product_video" 0 %}'.replace('0', videoId);
+    
+    // Populate the form with current values
+    document.getElementById('edit_video_title').value = title || '';
+    document.getElementById('edit_video_description').value = description || '';
+    document.getElementById('edit_video_order').value = order || 1;
+    
+    showEditVideoForm();
+}
+
+function deleteImage(imageId) {
+    if (confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
+        window.location.href = '{% url "productos:delete_product_image" 0 %}'.replace('0', imageId);
+    }
+}
+
+function deleteVideo(videoId) {
+    if (confirm('¿Estás seguro de que quieres eliminar este video?')) {
+        window.location.href = '{% url "productos:delete_product_video" 0 %}'.replace('0', videoId);
+    }
+}
+
+// Initialize subcategories on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateSubcategories();
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const imageModal = document.getElementById('imageModal');
+    const videoModal = document.getElementById('videoModal');
+    const editImageModal = document.getElementById('editImageModal');
+    const editVideoModal = document.getElementById('editVideoModal');
+    
+    if (event.target == imageModal) {
+        imageModal.style.display = 'none';
+    }
+    if (event.target == videoModal) {
+        videoModal.style.display = 'none';
+    }
+    if (event.target == editImageModal) {
+        editImageModal.style.display = 'none';
+    }
+    if (event.target == editVideoModal) {
+        editVideoModal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}
