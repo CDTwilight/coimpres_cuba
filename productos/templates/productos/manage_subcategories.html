@@ -1,0 +1,472 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Subcategorías{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<style>
+/* CSS crítico inline para móvil - Variables exactas de admin.css */
+:root {
+    --color-primary: #2C2A28 !important;
+    --color-accent: #9fa322 !important;
+    --color-background: #F9F6F1 !important;
+    --color-white: #FFFFFF !important;
+    --color-light-gray: #f8f9fa !important;
+    --color-border: #e1e5e9 !important;
+    --color-text-muted: #6c757d !important;
+    --color-success: #28a745 !important;
+    --color-danger: #dc3545 !important;
+    --color-warning: #ffc107 !important;
+    --shadow-soft: 0 2px 10px rgba(44, 42, 40, 0.08) !important;
+    --shadow-hover: 0 5px 15px rgba(44, 42, 40, 0.12) !important;
+    --border-radius: 10px !important;
+    --border-radius-sm: 6px !important;
+    --transition: all 0.3s ease !important;
+}
+
+/* Forzar colores exactos del admin.css solo para contenido admin */
+.admin-container {
+    background-color: var(--color-background) !important;
+    color: var(--color-primary) !important;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Header específico del admin */
+.admin-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(44, 42, 40, 0.9) 100%) !important;
+    color: var(--color-white) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.admin-header h1 {
+    color: var(--color-white) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-header p {
+    color: var(--color-white) !important;
+    opacity: 0.9 !important;
+}
+
+/* Cards y secciones */
+.admin-section {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.card,
+.table-responsive,
+.admin-filters,
+.modal-content,
+.filter-section {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+/* Mobile cards específicas */
+.mobile-card {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+    box-shadow: var(--shadow-soft) !important;
+    color: var(--color-primary) !important;
+}
+
+.mobile-card h3 {
+    color: var(--color-primary) !important;
+}
+
+.mobile-card-field strong {
+    color: var(--color-primary) !important;
+}
+
+/* Admin nav específico */
+.admin-nav {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.admin-nav .nav-link {
+    color: var(--color-primary) !important;
+}
+
+.admin-nav .nav-link.active {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+/* Tablas */
+.admin-table {
+    background-color: var(--color-white) !important;
+}
+
+.admin-table th,
+.admin-table td {
+    border-color: var(--color-border) !important;
+}
+
+/* Dark mode override solo para contenido admin */
+@media (prefers-color-scheme: dark) {
+    .admin-container,
+    .admin-section,
+    .card,
+    .modal-content,
+    .mobile-card,
+    .table-responsive,
+    .admin-filters,
+    .filter-section {
+        background-color: var(--color-white) !important;
+        color: var(--color-primary) !important;
+    }
+    
+    .admin-nav {
+        background-color: var(--color-white) !important;
+    }
+}
+
+/* Estilos para el select de filtro de categorías */
+#category_filter {
+    color: var(--color-primary) !important;
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    font-weight: 500 !important;
+}
+
+#category_filter:focus {
+    color: var(--color-primary) !important;
+    background-color: var(--color-white) !important;
+    border-color: var(--color-accent) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(159, 163, 34, 0.25) !important;
+}
+
+#category_filter option {
+    color: var(--color-primary) !important;
+    background-color: var(--color-white) !important;
+    font-weight: 500 !important;
+}
+
+/* Mantener el estilo cuando hay una opción seleccionada */
+#category_filter:not([value=""]) {
+    color: var(--color-primary) !important;
+    background-color: #e8f4f8 !important;
+    border-color: var(--color-accent) !important;
+    font-weight: 600 !important;
+}
+
+/* Botones de acción con fondo gris excepto eliminar */
+.action-buttons .btn:not(.btn-danger),
+.mobile-card-actions .btn:not(.btn-danger) {
+    background-color: #f8f9fa !important;
+    color: var(--color-primary) !important;
+    border-color: #e1e5e9 !important;
+}
+
+.action-buttons .btn:not(.btn-danger):hover,
+.mobile-card-actions .btn:not(.btn-danger):hover {
+    background-color: #e9ecef !important;
+    color: var(--color-primary) !important;
+    border-color: #d6d9dc !important;
+}
+
+/* Mantener rojo para botones de eliminar */
+.action-buttons .btn-danger,
+.mobile-card-actions .btn-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border-color: #dc3545 !important;
+}
+
+.action-buttons .btn-danger:hover,
+.mobile-card-actions .btn-danger:hover {
+    background-color: #c82333 !important;
+    color: #ffffff !important;
+    border-color: #bd2130 !important;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>📁 Gestión de Subcategorías</h1>
+        <p>Administra las subcategorías de productos</p>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <div class="admin-nav">
+        <a href="{% url 'productos:admin_panel' %}" class="nav-link">Productos</a>
+        <a href="{% url 'productos:manage_proveedores' %}" class="nav-link">Proveedores</a>
+        <a href="{% url 'productos:manage_categories' %}" class="nav-link">Categorías</a>
+        <a href="{% url 'productos:manage_subcategories' %}" class="nav-link active">Subcategorías</a>
+        <a href="{% url 'productos:manage_estatus' %}" class="nav-link">Estatus</a>
+    </div>
+    
+    <!-- Mensajes de éxito/error -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>Lista de Subcategorías</h2>
+            <button class="btn btn-primary" onclick="showAddForm()"> Agregar Subcategoría</button>
+        </div>
+        
+        <!-- Filter by Category -->
+        <div class="filter-section">
+            <form method="get" class="filter-form">
+                <div class="filter-group">
+                    <label for="category_filter">Filtrar por Categoría:</label>
+                    <select name="category" id="category_filter" class="form-control" onchange="this.form.submit()">
+                        <option value="">Todas las categorías</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.pk }}" {% if cat.pk == request.GET.category|add:0 %}selected{% endif %}>
+                                {{ cat.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+            
+            <!-- Active Filter Indicator -->
+            {% if request.GET.category %}
+            <div class="active-filter-badge" style="margin-top: 15px; padding: 12px 20px; background: linear-gradient(135deg, #9fa322, #b8bd2a) !important; border-radius: var(--border-radius-sm); display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-soft); flex-wrap: wrap; gap: 10px; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
+                    <span style="font-size: 20px;">🔍</span>
+                    <div style="flex: 1;">
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.9) !important; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Filtrando por:</div>
+                        <div style="font-size: 16px; color: white !important; font-weight: 700; margin-top: 2px;">
+                            {% for cat in categories %}
+                                {% if cat.pk == request.GET.category|add:0 %}
+                                    {{ cat.name }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'productos:manage_subcategories' %}" class="btn btn-light" style="background: white !important; color: var(--color-primary) !important; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s ease; white-space: nowrap; text-decoration: none;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onfocus="this.style.transform='scale(1.05)'" onblur="this.style.transform='scale(1)'">
+                    ✖️ Limpiar filtro
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Slug</th>
+                        <th>Productos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subcategory in subcategories %}
+                    <tr>
+                        <td><strong>{{ subcategory.name }}</strong></td>
+                        <td><span class="badge badge-primary">{{ subcategory.category.name }}</span></td>
+                        <td><code>{{ subcategory.slug }}</code></td>
+                        <td>{{ subcategory.product_set.count }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'productos:edit_subcategory' subcategory.pk %}" class="btn btn-sm btn-warning" title="Editar">✏️</a>
+                                <button class="btn btn-sm btn-danger" title="Eliminar" data-item-id="{{ subcategory.pk }}" data-item-name="{{ subcategory.name }}" data-item-type="subcategoría" onclick="deleteItem(this.dataset.itemId, this.dataset.itemName, this.dataset.itemType)">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No hay subcategorías registradas</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mobile Cards View -->
+        <div class="table-mobile-cards">
+            {% for subcategory in subcategories %}
+            <div class="mobile-card">
+                <div class="mobile-card-header">
+                    <div class="mobile-card-title">
+                        <h3>📁 {{ subcategory.name }}</h3>
+                        <p><code>{{ subcategory.slug }}</code></p>
+                    </div>
+                </div>
+                <div class="mobile-card-body">
+                    <div class="mobile-card-field">
+                        <strong>Categoría</strong>
+                        <span class="badge badge-primary">{{ subcategory.category.name }}</span>
+                    </div>
+                    <div class="mobile-card-field">
+                        <strong>Productos</strong>
+                        <span>{{ subcategory.product_set.count }}</span>
+                    </div>
+                </div>
+                <div class="mobile-card-actions">
+                    <a href="{% url 'productos:edit_subcategory' subcategory.pk %}" class="btn btn-sm btn-warning">✏️ Editar</a>
+                    <button class="btn btn-sm btn-danger" data-item-id="{{ subcategory.pk }}" data-item-name="{{ subcategory.name }}" data-item-type="subcategoría" onclick="deleteItem(this.dataset.itemId, this.dataset.itemName, this.dataset.itemType)">🗑️ Eliminar</button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center text-muted" style="padding: 40px;">
+                No hay subcategorías registradas
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Paginación -->
+        {% if is_paginated %}
+        <div class="admin-pagination mt-4">
+            <nav aria-label="Navegación de páginas del admin" class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="pagination-info mb-2 mb-md-0">
+                    <small class="text-muted">
+                        Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} subcategorías
+                    </small>
+                </div>
+                
+                <ul class="pagination mb-0">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" title="Primera página">
+                                ≪
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" title="Página anterior">
+                                ‹
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" title="Página siguiente">
+                                ›
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" title="Última página">
+                                ≫
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Add Form Modal -->
+    <div id="addModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Agregar Nueva Subcategoría</h3>
+                <button onclick="hideAddForm()" class="close-btn">✕</button>
+            </div>
+            <form method="post" action="{% url 'productos:add_subcategory' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="subcategory_name">Nombre de la Subcategoría *</label>
+                    <input type="text" id="subcategory_name" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category_id">Categoría *</label>
+                    <select id="category_id" name="category" class="form-control" required>
+                        <option value="">Selecciona una categoría</option>
+                        {% for category in categories %}
+                            <option value="{{ category.pk }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" onclick="hideAddForm()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete confirmation modal -->
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🗑️ Confirmar Eliminación</h3>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar la subcategoría <strong id="deleteItemName"></strong>?</p>
+                <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideDeleteModal()" class="btn btn-secondary">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">🗑️ Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showAddForm() {
+    document.getElementById('addModal').style.display = 'block';
+}
+
+function hideAddForm() {
+    document.getElementById('addModal').style.display = 'none';
+}
+
+function deleteItem(itemId, itemName, itemType) {
+    document.getElementById('deleteItemName').textContent = itemName;
+    document.getElementById('deleteForm').action = '/productos/admin/subcategorias/delete/' + itemId + '/';
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const addModal = document.getElementById('addModal');
+    const deleteModal = document.getElementById('deleteModal');
+    if (event.target == addModal) {
+        addModal.style.display = 'none';
+    }
+    if (event.target == deleteModal) {
+        deleteModal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}
