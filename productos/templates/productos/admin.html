@@ -1,0 +1,759 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}Panel de Administración - Productos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<style>
+/* CSS crítico inline para móvil - Variables exactas de admin.css */
+:root {
+    --color-primary: #2C2A28 !important;
+    --color-accent: #9fa322 !important;
+    --color-background: #F9F6F1 !important;
+    --color-white: #FFFFFF !important;
+    --color-light-gray: #f8f9fa !important;
+    --color-border: #e1e5e9 !important;
+    --color-text-muted: #6c757d !important;
+    --color-success: #28a745 !important;
+    --color-danger: #dc3545 !important;
+    --color-warning: #ffc107 !important;
+    --shadow-soft: 0 2px 10px rgba(44, 42, 40, 0.08) !important;
+    --shadow-hover: 0 5px 15px rgba(44, 42, 40, 0.12) !important;
+    --border-radius: 10px !important;
+    --border-radius-sm: 6px !important;
+    --transition: all 0.3s ease !important;
+}
+
+/* Forzar colores exactos del admin.css solo para contenido admin */
+.admin-container {
+    background-color: var(--color-background) !important;
+    color: var(--color-primary) !important;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Header específico del admin */
+.admin-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(44, 42, 40, 0.9) 100%) !important;
+    color: var(--color-white) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.admin-header h1 {
+    color: var(--color-white) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-header p {
+    color: var(--color-white) !important;
+    opacity: 0.9 !important;
+}
+
+/* Cards y secciones */
+.admin-section {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.card,
+.table-responsive,
+.admin-filters,
+.modal-content {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+/* Mobile cards específicas */
+.mobile-card {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+    box-shadow: var(--shadow-soft) !important;
+    color: var(--color-primary) !important;
+}
+
+.mobile-card h3 {
+    color: var(--color-primary) !important;
+}
+
+.mobile-card-field strong {
+    color: var(--color-primary) !important;
+}
+
+/* Admin nav específico */
+.admin-nav {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.admin-nav .nav-link {
+    color: var(--color-primary) !important;
+}
+
+.admin-nav .nav-link.active {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+/* Paginación específica */
+.admin-pagination {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.admin-pagination .page-link {
+    color: var(--color-primary) !important;
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+}
+
+.admin-pagination .page-link:hover {
+    color: var(--color-white) !important;
+    background: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+}
+
+.admin-pagination .page-item.active .page-link {
+    color: var(--color-white) !important;
+    background: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+}
+
+/* Tablas */
+.admin-table {
+    background-color: var(--color-white) !important;
+}
+
+.admin-table th,
+.admin-table td {
+    border-color: var(--color-border) !important;
+}
+
+/* Thumbnails */
+.product-thumb {
+    border-radius: var(--border-radius-sm) !important;
+}
+
+.no-image {
+    background: var(--color-light-gray) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+}
+
+/* SweetAlert2 Custom Styles */
+.swal-custom-popup {
+    font-family: 'Lato', sans-serif !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.swal-custom-title {
+    color: var(--color-primary) !important;
+    font-weight: 600 !important;
+}
+
+.swal2-html-container {
+    color: var(--color-primary) !important;
+}
+
+.swal2-icon {
+    border-color: var(--color-accent) !important;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: var(--color-warning) !important;
+    color: var(--color-warning) !important;
+}
+
+.swal2-icon.swal2-question {
+    border-color: var(--color-accent) !important;
+    color: var(--color-accent) !important;
+}
+
+/* Dark mode override solo para contenido admin */
+@media (prefers-color-scheme: dark) {
+    .admin-container,
+    .admin-section,
+    .card,
+    .modal-content,
+    .mobile-card,
+    .table-responsive,
+    .admin-filters,
+    .admin-pagination {
+        background-color: var(--color-white) !important;
+        color: var(--color-primary) !important;
+    }
+    
+    .admin-nav {
+        background-color: var(--color-white) !important;
+    }
+}
+
+/* Botones de acción con fondo gris excepto eliminar */
+.action-buttons .btn:not(.btn-danger),
+.mobile-card-actions .btn:not(.btn-danger) {
+    background-color: #f8f9fa !important;
+    color: var(--color-primary) !important;
+    border-color: #e1e5e9 !important;
+}
+
+.action-buttons .btn:not(.btn-danger):hover,
+.mobile-card-actions .btn:not(.btn-danger):hover {
+    background-color: #e9ecef !important;
+    color: var(--color-primary) !important;
+    border-color: #d6d9dc !important;
+}
+
+/* Mantener rojo para botones de eliminar */
+.action-buttons .btn-danger,
+.mobile-card-actions .btn-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border-color: #dc3545 !important;
+}
+
+.action-buttons .btn-danger:hover,
+.mobile-card-actions .btn-danger:hover {
+    background-color: #c82333 !important;
+    color: #ffffff !important;
+    border-color: #bd2130 !important;
+}
+
+/* Mobile específico */
+@media (max-width: 768px) {
+    .product-thumb {
+        width: 35px !important;
+        height: 35px !important;
+        object-fit: cover !important;
+        border-radius: var(--border-radius-sm) !important;
+    }
+    
+    .no-image {
+        width: 35px !important;
+        height: 35px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: var(--color-light-gray) !important;
+        border: 1px solid var(--color-border) !important;
+        border-radius: var(--border-radius-sm) !important;
+        font-size: 8px !important;
+        color: var(--color-text-muted) !important;
+    }
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    {% include 'productos/partials/admin_header.html' with page_title=" Panel de Administración" page_description="Gestiona productos, proveedores, categorías y más" %}
+    
+    <!-- Navigation Menu -->
+    <div class="admin-nav">
+        <a href="{% url 'productos:admin_panel' %}" class="nav-link active">Productos</a>
+        <a href="{% url 'productos:manage_proveedores' %}" class="nav-link">Proveedores</a>
+        <a href="{% url 'productos:manage_categories' %}" class="nav-link">Categorías</a>
+        <a href="{% url 'productos:manage_subcategories' %}" class="nav-link">Subcategorías</a>
+        <a href="{% url 'productos:manage_estatus' %}" class="nav-link">Estatus</a>
+    </div>
+    
+    <!-- Mensajes de éxito/error -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Productos Section -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>Gestión de Productos</h2>
+            <button class="btn btn-primary" onclick="showAddProductForm()">Agregar Producto</button>
+        </div>
+        
+        <!-- Search and filters -->
+        <div class="admin-filters">
+            <form method="get" class="search-form">
+                <input type="text" name="search" value="{{ search }}" placeholder="Buscar productos..." class="search-input">
+                <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                {% if search %}
+                    <a href="{% url 'productos:admin_panel' %}" class="btn btn-outline-secondary">Limpiar</a>
+                {% endif %}
+            </form>
+        </div>
+        
+        <!-- Products Table -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Categoría</th>
+                        <th>Proveedor</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-thumb">
+                            {% else %}
+                                <div class="no-image">Sin imagen</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ product.name }}</strong>
+                            {% if product.description %}
+                                <br><small class="text-muted">{{ product.description|truncatechars:60 }}</small>
+                            {% endif %}
+                        </td>
+                        <td><code>{{ product.sku|default:"-" }}</code></td>
+                        <td>
+                            {{ product.category.name|default:"-" }}
+                            {% if product.subcategory %}
+                                <br><small class="text-muted">{{ product.subcategory.name }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ product.proveedor.name|default:"-" }}</td>
+                        <td>
+                            {% if product.price %}
+                                ${{ product.price }}
+                            {% else %}
+                                <span class="text-muted">Consultar</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.is_active %}
+                                <span class="badge badge-success">Activo</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Inactivo</span>
+                            {% endif %}
+                            <br>
+                            {% if product.destacado %}
+                                <span class="badge badge-warning">Destacado</span><br>
+                            {% endif %}
+                            <span class="badge badge-info">{{ product.estatus.name|default:"Sin estatus" }}</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'productos:product_detail' product.slug %}" class="btn btn-sm btn-info" title="Ver">Ver</a>
+                                <a href="{% url 'productos:edit_product' product.pk %}" class="btn btn-sm btn-warning" title="Editar">Editar</a>
+                                {% if product.is_active %}
+                                    <button class="btn btn-sm btn-secondary" title="Desactivar" data-product-id="{{ product.pk }}" data-product-name="{{ product.name }}" onclick="toggleProductStatus(this.dataset.productId, this.dataset.productName, false)">Desactivar</button>
+                                {% else %}
+                                    <button class="btn btn-sm btn-success" title="Activar" data-product-id="{{ product.pk }}" data-product-name="{{ product.name }}" onclick="toggleProductStatus(this.dataset.productId, this.dataset.productName, true)">Activar</button>
+                                {% endif %}
+                                <button class="btn btn-sm btn-danger" title="Eliminar" data-product-id="{{ product.pk }}" data-product-name="{{ product.name }}" onclick="deleteProduct(this.dataset.productId, this.dataset.productName)">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">
+                            {% if search %}
+                                No se encontraron productos que coincidan con "{{ search }}"
+                            {% else %}
+                                No hay productos registrados
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mobile Cards View -->
+        <div class="table-mobile-cards">
+            {% for product in products %}
+            <div class="mobile-card">
+                <div class="mobile-card-header">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="mobile-card-thumb">
+                    {% else %}
+                        <div class="no-image" style="width: 60px; height: 60px; font-size: 12px;">Sin imagen</div>
+                    {% endif %}
+                    <div class="mobile-card-title">
+                        <h3>{{ product.name }}</h3>
+                        {% if product.description %}
+                            <p>{{ product.description|truncatechars:80 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mobile-card-body">
+                    <div class="mobile-card-field">
+                        <strong>Código</strong>
+                        <span>{{ product.sku|default:"-" }}</span>
+                    </div>
+                    <div class="mobile-card-field">
+                        <strong>Categoría</strong>
+                        <span>{{ product.category.name|default:"-" }}</span>
+                    </div>
+                    <div class="mobile-card-field">
+                        <strong>Proveedor</strong>
+                        <span>{{ product.proveedor.name|default:"-" }}</span>
+                    </div>
+                    <div class="mobile-card-field">
+                        <strong>Precio</strong>
+                        <span>
+                            {% if product.price %}
+                                ${{ product.price }}
+                            {% else %}
+                                Consultar
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if product.subcategory %}
+                    <div class="mobile-card-field">
+                        <strong>Subcategoría</strong>
+                        <span>{{ product.subcategory.name }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="mobile-card-field">
+                        <strong>Estado</strong>
+                        <span>
+                            {% if product.is_active %}
+                                <span class="badge badge-success">Activo</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Inactivo</span>
+                            {% endif %}
+                            <br>
+                            {% if product.destacado %}
+                                <span class="badge badge-warning">Destacado</span><br>
+                            {% endif %}
+                            <span class="badge badge-info">{{ product.estatus.name|default:"Sin estatus" }}</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="mobile-card-actions">
+                    <a href="{% url 'productos:product_detail' product.slug %}" class="btn btn-sm btn-info">Ver</a>
+                    <a href="{% url 'productos:edit_product' product.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    {% if product.is_active %}
+                        <button class="btn btn-sm btn-secondary" data-product-id="{{ product.pk }}" data-product-name="{{ product.name }}" onclick="toggleProductStatus(this.dataset.productId, this.dataset.productName, false)">Desactivar</button>
+                    {% else %}
+                        <button class="btn btn-sm btn-success" data-product-id="{{ product.pk }}" data-product-name="{{ product.name }}" onclick="toggleProductStatus(this.dataset.productId, this.dataset.productName, true)">Activar</button>
+                    {% endif %}
+                    <button class="btn btn-sm btn-danger" data-product-id="{{ product.pk }}" data-product-name="{{ product.name }}" onclick="deleteProduct(this.dataset.productId, this.dataset.productName)">Eliminar</button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center text-muted" style="padding: 40px;">
+                {% if search %}
+                    No se encontraron productos que coincidan con "{{ search }}"
+                {% else %}
+                    No hay productos registrados
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Paginación -->
+        {% if is_paginated %}
+        <div class="admin-pagination mt-4">
+            <nav aria-label="Navegación de páginas del admin" class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="pagination-info mb-2 mb-md-0">
+                    <small class="text-muted">
+                        Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} productos
+                    </small>
+                </div>
+                
+                <ul class="pagination mb-0">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}" title="Primera página">
+                                ≪
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" title="Página anterior">
+                                ‹
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}" title="Página siguiente">
+                                ›
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}" title="Última página">
+                                ≫
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Add Product Form Modal -->
+    <div id="addProductModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Agregar Nuevo Producto</h3>
+                <button onclick="hideAddProductForm()" class="close-btn">×</button>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'productos:add_product' %}">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="product_name">Nombre del Producto *</label>
+                        <input type="text" id="product_name" name="name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product_sku">Código SKU</label>
+                        <input type="text" id="product_sku" name="sku" class="form-control" placeholder="Se genera automáticamente" readonly style="background-color: #f8f9fa; color: #6c757d;">
+                        <small class="form-text text-muted">
+                            <strong>El SKU se genera automáticamente</strong> cuando guardas el producto. 
+                            Deja este campo en blanco para generar un código único.
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product_proveedor">Proveedor</label>
+                        <select id="product_proveedor" name="proveedor" class="form-control">
+                            <option value="">Seleccionar proveedor...</option>
+                            {% for proveedor in proveedores %}
+                                <option value="{{ proveedor.id }}">{{ proveedor.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product_category">Categoría *</label>
+                        <select id="product_category" name="category" class="form-control" required>
+                            <option value="">Seleccionar categoría...</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product_subcategory">Subcategoría</label>
+                        <select id="product_subcategory" name="subcategory" class="form-control">
+                            <option value="">Seleccionar subcategoría...</option>
+                            {% for subcategory in subcategories %}
+                                <option value="{{ subcategory.id }}" data-category="{{ subcategory.category.id }}">{{ subcategory.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product_estatus">Estatus de Procedencia</label>
+                        <select id="product_estatus" name="estatus" class="form-control">
+                            <option value="">Seleccionar estatus...</option>
+                            {% for estatus in estatus_list %}
+                                <option value="{{ estatus.id }}">{{ estatus.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product_price">Precio</label>
+                        <input type="number" id="product_price" name="price" class="form-control" step="0.01" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product_peso">Peso (kg)</label>
+                        <input type="number" id="product_peso" name="peso" class="form-control" step="0.01" min="0">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product_short_description">Descripción Corta</label>
+                    <input type="text" id="product_short_description" name="short_description" class="form-control" maxlength="500">
+                </div>
+                
+                <div class="form-group">
+                    <label for="product_description">Descripción Completa</label>
+                    <textarea id="product_description" name="description" class="form-control" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product_image">Imagen Principal</label>
+                    <input type="file" id="product_image" name="image" class="form-control" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="product_is_active" name="is_active" checked> 
+                        Producto Activo
+                    </label>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" onclick="hideAddProductForm()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete confirmation modal -->
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Eliminación</h3>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar el producto <strong id="deleteProductName"></strong>?</p>
+                <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideDeleteModal()" class="btn btn-secondary">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function showAddProductForm() {
+    document.getElementById('addProductModal').style.display = 'block';
+}
+
+function hideAddProductForm() {
+    document.getElementById('addProductModal').style.display = 'none';
+}
+
+function deleteProduct(productId, productName) {
+    Swal.fire({
+        title: '¿Eliminar producto?',
+        html: `¿Estás seguro de que quieres eliminar el producto<br><strong>"${productName}"</strong>?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        customClass: {
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'btn btn-danger',
+            cancelButton: 'btn btn-secondary'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Create and submit form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/productos/admin/productos/delete/' + productId + '/';
+            
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+
+function toggleProductStatus(productId, productName, activate) {
+    const action = activate ? 'activar' : 'desactivar';
+    const actionCapitalized = activate ? 'Activar' : 'Desactivar';
+    const color = activate ? '#28a745' : '#6c757d';
+    
+    Swal.fire({
+        title: `${actionCapitalized} producto`,
+        html: `¿Estás seguro de que quieres ${action} el producto<br><strong>"${productName}"</strong>?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: color,
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: `Sí, ${action}`,
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        customClass: {
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: activate ? 'btn btn-success' : 'btn btn-secondary',
+            cancelButton: 'btn btn-secondary'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '/productos/admin/productos/toggle-status/' + productId + '/';
+        }
+    });
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const addModal = document.getElementById('addProductModal');
+    const deleteModal = document.getElementById('deleteModal');
+    if (event.target == addModal) {
+        addModal.style.display = 'none';
+    }
+    if (event.target == deleteModal) {
+        deleteModal.style.display = 'none';
+    }
+}
+
+// Update subcategories based on selected category
+document.getElementById('product_category').addEventListener('change', function() {
+    const categoryId = this.value;
+    const subcategorySelect = document.getElementById('product_subcategory');
+    const options = subcategorySelect.querySelectorAll('option[data-category]');
+    
+    // Reset subcategory
+    subcategorySelect.value = '';
+    
+    // Show/hide options based on category
+    options.forEach(function(option) {
+        if (option.getAttribute('data-category') === categoryId || categoryId === '') {
+            option.style.display = 'block';
+        } else {
+            option.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}
