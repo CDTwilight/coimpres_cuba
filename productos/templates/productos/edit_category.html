@@ -1,0 +1,342 @@
+{% extends 'coimpres_cuba/base.html' %}
+{% load static %}
+
+{% block title %}Editar Categoría{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<style>
+/* CSS crítico inline para móvil - Variables exactas de admin.css */
+:root {
+    --color-primary: #2C2A28 !important;
+    --color-accent: #9fa322 !important;
+    --color-background: #F9F6F1 !important;
+    --color-white: #FFFFFF !important;
+    --color-light-gray: #f8f9fa !important;
+    --color-border: #e1e5e9 !important;
+    --color-text-muted: #6c757d !important;
+    --color-success: #28a745 !important;
+    --color-danger: #dc3545 !important;
+    --color-warning: #ffc107 !important;
+    --shadow-soft: 0 2px 10px rgba(44, 42, 40, 0.08) !important;
+    --shadow-hover: 0 5px 15px rgba(44, 42, 40, 0.12) !important;
+    --border-radius: 10px !important;
+    --border-radius-sm: 6px !important;
+    --transition: all 0.3s ease !important;
+}
+
+/* Forzar colores exactos del admin.css solo para contenido admin */
+.admin-container {
+    background-color: var(--color-background) !important;
+    color: var(--color-primary) !important;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Header específico del admin */
+.admin-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(44, 42, 40, 0.9) 100%) !important;
+    color: var(--color-white) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.admin-header h1 {
+    color: var(--color-white) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-header p {
+    color: var(--color-white) !important;
+    opacity: 0.9 !important;
+}
+
+/* Cards y secciones */
+.admin-section {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.card,
+.table-responsive,
+.admin-filters,
+.modal-content,
+.edit-form-container {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+/* Admin nav específico */
+.admin-nav {
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+.admin-nav .nav-link {
+    color: var(--color-primary) !important;
+}
+
+.admin-nav .nav-link.active {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+/* Dark mode override solo para contenido admin */
+@media (prefers-color-scheme: dark) {
+    .admin-container,
+    .admin-section,
+    .card,
+    .modal-content,
+    .table-responsive,
+    .admin-filters,
+    .edit-form-container {
+        background-color: var(--color-white) !important;
+        color: var(--color-primary) !important;
+    }
+    
+    .admin-nav {
+        background-color: var(--color-white) !important;
+    }
+}
+
+/* Estilos para inputs con valores precargados */
+.form-control {
+    transition: var(--transition) !important;
+}
+
+.form-control:not(:placeholder-shown) {
+    background-color: #e8f4f8 !important;
+    border-color: var(--color-accent) !important;
+    color: var(--color-primary) !important;
+    font-weight: 500 !important;
+}
+
+.form-control:focus {
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 0 0 0.2rem rgba(159, 163, 34, 0.25) !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>✏️ Editar Categoría</h1>
+        <p>Modifica los datos de la categoría</p>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <div class="admin-nav">
+        <a href="{% url 'productos:admin_panel' %}" class="nav-link">📦 Productos</a>
+        <a href="{% url 'productos:manage_proveedores' %}" class="nav-link">🏭 Proveedores</a>
+        <a href="{% url 'productos:manage_categories' %}" class="nav-link active">📂 Categorías</a>
+        <a href="{% url 'productos:manage_subcategories' %}" class="nav-link">📁 Subcategorías</a>
+        <a href="{% url 'productos:manage_estatus' %}" class="nav-link">🏷️ Estatus</a>
+    </div>
+    
+    <!-- Mensajes de éxito/error -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>Información de la Categoría</h2>
+            <a href="{% url 'productos:manage_categories' %}" class="btn btn-secondary">← Volver a la lista</a>
+        </div>
+        
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="name">Nombre de la Categoría *</label>
+                    <input type="text" id="name" name="name" value="{{ category.name|default:'' }}" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="slug">Slug</label>
+                    <input type="text" id="slug" name="slug" value="{{ category.slug|default:'' }}" class="form-control" readonly>
+                    <small class="form-text text-muted">El slug se genera automáticamente basado en el nombre.</small>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'productos:manage_categories' %}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Statistics Section -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>📊 Estadísticas</h2>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ category.subcategory_set.count }}</div>
+                <div class="stat-label">Subcategorías</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ category.product_set.count }}</div>
+                <div class="stat-label">Productos</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Subcategories -->
+    {% if category.subcategory_set.all %}
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>📁 Subcategorías Asociadas ({{ category.subcategory_set.count }})</h2>
+        </div>
+        
+        <!-- Desktop Table View -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Slug</th>
+                        <th>Productos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subcategory in category.subcategory_set.all %}
+                    <tr>
+                        <td>{{ subcategory.name }}</td>
+                        <td><code>{{ subcategory.slug }}</code></td>
+                        <td>{{ subcategory.product_set.count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mobile Cards View -->
+        <div class="table-mobile-cards">
+            {% for subcategory in category.subcategory_set.all %}
+            <div class="mobile-card">
+                <div class="mobile-card-header">
+                    <div class="mobile-card-title">
+                        <h3>{{ subcategory.name }}</h3>
+                    </div>
+                </div>
+                <div class="mobile-card-body">
+                    <div class="mobile-card-field">
+                        <strong>Slug</strong>
+                        <span><code>{{ subcategory.slug }}</code></span>
+                    </div>
+                    <div class="mobile-card-field">
+                        <strong>Productos</strong>
+                        <span>{{ subcategory.product_set.count }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Related Products -->
+    {% if category.product_set.all %}
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>📦 Productos en esta Categoría ({{ category.product_set.count }})</h2>
+        </div>
+        
+        <!-- Desktop Table View -->
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Subcategoría</th>
+                        <th>Estatus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in category.product_set.all|slice:":10" %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td><code>{{ product.sku|default:"-" }}</code></td>
+                        <td>{{ product.subcategory.name|default:"-" }}</td>
+                        <td><span class="badge">{{ product.estatus.name|default:"Sin estatus" }}</span></td>
+                    </tr>
+                    {% endfor %}
+                    {% if category.product_set.count > 10 %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            Y {{ category.product_set.count|add:"-10" }} productos más...
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mobile Cards View -->
+        <div class="table-mobile-cards">
+            {% for product in category.product_set.all|slice:":10" %}
+            <div class="mobile-card">
+                <div class="mobile-card-header">
+                    <div class="mobile-card-title">
+                        <h3>{{ product.name }}</h3>
+                    </div>
+                </div>
+                <div class="mobile-card-body">
+                    <div class="mobile-card-field">
+                        <strong>Código</strong>
+                        <span><code>{{ product.sku|default:"-" }}</code></span>
+                    </div>
+                    <div class="mobile-card-field">
+                        <strong>Subcategoría</strong>
+                        <span>{{ product.subcategory.name|default:"-" }}</span>
+                    </div>
+                    <div class="mobile-card-field">
+                        <strong>Estatus</strong>
+                        <span><span class="badge">{{ product.estatus.name|default:"Sin estatus" }}</span></span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if category.product_set.count > 10 %}
+            <div class="text-center text-muted" style="padding: 20px;">
+                Y {{ category.product_set.count|add:"-10" }} productos más...
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-generate slug from name
+document.getElementById('name').addEventListener('input', function() {
+    const name = this.value;
+    const slug = name.toLowerCase()
+                    .replace(/[áàäâ]/g, 'a')
+                    .replace(/[éèëê]/g, 'e')
+                    .replace(/[íìïî]/g, 'i')
+                    .replace(/[óòöô]/g, 'o')
+                    .replace(/[úùüû]/g, 'u')
+                    .replace(/ñ/g, 'n')
+                    .replace(/[^a-z0-9]/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+    document.getElementById('slug').value = slug;
+});
+</script>
+{% endblock %}
